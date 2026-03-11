@@ -26,6 +26,11 @@ def write_text_file(path: str, content: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--corpus",
+        default=None,
+        help="Path to resume corpus directory",
+    )
     parser.add_argument("--jd", required=True, help="Path to job description text file")
     parser.add_argument("--resume", required=True, help="Path to resume text file")
     parser.add_argument("--out", default="report.md", help="Output markdown path")
@@ -38,16 +43,20 @@ def main() -> None:
         jd_text=read_text_file(args.jd),
         resume_text=read_text_file(args.resume),
     )
+    if args.corpus:
+        initial_state.artifacts["corpus_dir"] = args.corpus
 
     final_state = run_agent(
         llm=llm,
         state=initial_state,
     )
 
-    report = final_state.artifacts.get("report_md", "")
-    write_text_file(args.out, report)
+    output_text = final_state.artifacts.get("target_resume_txt")
+    if output_text is None:
+        output_text = final_state.artifacts.get("report_md", "")
+    write_text_file(args.out, output_text)
 
-    print(f"Wrote {args.out} ({len(report.encode('utf-8'))} bytes)")
+    print(f"Wrote {args.out} ({len(output_text.encode('utf-8'))} bytes)")
     print(f"Artifacts: {sorted(final_state.artifacts.keys())}")
     print(f"Tool calls: {len(final_state.tool_history)}")
 

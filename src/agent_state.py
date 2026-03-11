@@ -15,6 +15,13 @@ ArtifactKey = Literal[
 ToolHistoryEntry = dict[str, Any]
 
 @dataclass
+class CorpusExample:
+    slug: str
+    jd_text: str
+    resume_variant_text: str
+
+
+@dataclass
 class AgentState:
     jd_text: str
     resume_text: str

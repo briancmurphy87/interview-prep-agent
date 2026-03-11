@@ -1,0 +1,17 @@
+{
+  "required_markdown_sections": [
+    "# Interview Prep Report",
+    "## Overall Fit",
+    "## Key Requirements",
+    "## Resume Evidence",
+    "## Gaps / Weak Areas",
+    "## Suggested Talking Points"
+  ],
+  "expected_keywords": [
+    "python",
+    "enterprise",
+    "applications",
+    "cloud",
+    "services"
+  ]
+}

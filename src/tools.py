@@ -93,7 +93,7 @@ def _markdown_to_text(text: str) -> str:
     # emphasis / bold / code markers
     text = re.sub(r"[*_`>#]", "", text)
 
-    # markdown headings / bullets
+    # Markdown headings / bullets
     text = re.sub(r"^\s*[-+]\s+", "", text, flags=re.MULTILINE)
     text = re.sub(r"^\s*#{1,6}\s*", "", text, flags=re.MULTILINE)
 
@@ -475,4 +475,6 @@ TOOLS: dict[str, ToolFn] = {
     "score_resume_fit": tool_score_resume_fit,
     "render_report": tool_render_report,
     "dump_state_summary": tool_dump_state_summary,
+    "load_resume_corpus": tool_load_resume_corpus,
+    "retrieve_similar_resume_examples": tool_retrieve_similar_resume_examples,
 }

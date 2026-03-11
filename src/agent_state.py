@@ -35,6 +35,8 @@ class AgentState:
     # Executed tool calls + results for observability/debugging
     tool_history: list[ToolHistoryEntry] = field(default_factory=list)
 
+    corpus_examples: list[CorpusExample] = field(default_factory=list)
+
     def add_note(self, message: str) -> None:
         self.notes.append(message)
 

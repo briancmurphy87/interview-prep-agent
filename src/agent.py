@@ -1,54 +1,55 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
-# TODO: consider using this when you no longer want to use "export" command from terminal
 from dotenv import load_dotenv
 
 from src.agent_loop import run_agent
-
 from src.agent_state import AgentState
 from src.llm import LLM
 
+
 load_dotenv()
 
-def init_input_job_description(jd_file_path_txt: str) -> str:
-    with open(jd_file_path_txt, "r", encoding="utf-8") as f:
-        return f.read().strip()
 
-def init_input_resume(resume_file_path_txt: str) -> str:
-    with open(resume_file_path_txt, "r", encoding="utf-8") as f:
-        return f.read().strip()
+def read_text_file(path: str) -> str:
+    file_path = Path(path)
+    if not file_path.exists():
+        raise FileNotFoundError(f"Input file does not exist: {path}")
+    return file_path.read_text(encoding="utf-8").strip()
 
-# ----------------------------
-# 5) CLI
-# ----------------------------
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--jd", required=True, help="Path to job description text file")
-    ap.add_argument("--resume", required=True, help="Path to resume text file")
-    ap.add_argument("--out", default="report.md", help="Output markdown path")
-    ap.add_argument("--model", default="gpt-4.1-mini", help="LLM model name")
-    args = ap.parse_args()
 
-    # init model
+def write_text_file(path: str, content: str) -> None:
+    Path(path).write_text(content, encoding="utf-8")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--jd", required=True, help="Path to job description text file")
+    parser.add_argument("--resume", required=True, help="Path to resume text file")
+    parser.add_argument("--out", default="report.md", help="Output markdown path")
+    parser.add_argument("--model", default="gpt-4.1-mini", help="LLM model name")
+    args = parser.parse_args()
+
     llm = LLM(model=args.model)
 
-    # init agent state and its input args
-    state = run_agent(
-        llm=llm,
-        state=AgentState(
-            jd_text=init_input_job_description(args.jd),
-            resume_text=init_input_resume(args.resume),
-        ),
+    initial_state = AgentState(
+        jd_text=read_text_file(args.jd),
+        resume_text=read_text_file(args.resume),
     )
 
-    # output report
-    report = state.artifacts.get("report_md", "")
-    with open(args.out, "w", encoding="utf-8") as f:
-        f.write(report)
+    final_state = run_agent(
+        llm=llm,
+        state=initial_state,
+    )
+
+    report = final_state.artifacts.get("report_md", "")
+    write_text_file(args.out, report)
 
     print(f"Wrote {args.out} ({len(report.encode('utf-8'))} bytes)")
+    print(f"Artifacts: {sorted(final_state.artifacts.keys())}")
+    print(f"Tool calls: {len(final_state.tool_history)}")
 
 
 if __name__ == "__main__":

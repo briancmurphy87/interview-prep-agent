@@ -45,6 +45,9 @@ def main() -> None:
     )
     if args.corpus:
         initial_state.artifacts["corpus_dir"] = args.corpus
+        initial_state.artifacts["desired_output"] = "target_resume"
+    else:
+        initial_state.artifacts["desired_output"] = "report"
 
     final_state = run_agent(
         llm=llm,

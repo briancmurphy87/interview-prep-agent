@@ -329,6 +329,54 @@ def tool_dump_state_summary(state: AgentState) -> ToolResult:
     }
 
 
+def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any]:
+    """
+    Load corpus examples from:
+      resume_corpus/<slug>/jd.txt or jd.md
+      resume_corpus/<slug>/resume_variant.txt
+    """
+    base = Path(corpus_dir)
+    if not base.exists():
+        raise FileNotFoundError(f"Corpus directory does not exist: {corpus_dir}")
+
+    examples: list[CorpusExample] = []
+
+    for child in sorted(base.iterdir()):
+        if not child.is_dir():
+            continue
+
+        jd_path_txt = child / "jd.txt"
+        jd_path_md = child / "jd.md"
+        resume_variant_path = child / "resume_variant.txt"
+
+        if not resume_variant_path.exists():
+            continue
+
+        jd_path = None
+        if jd_path_txt.exists():
+            jd_path = jd_path_txt
+        elif jd_path_md.exists():
+            jd_path = jd_path_md
+
+        if jd_path is None:
+            continue
+
+        examples.append(
+            CorpusExample(
+                slug=child.name,
+                jd_text=_read_textish_file(jd_path),
+                resume_variant_text=_read_textish_file(resume_variant_path),
+            )
+        )
+
+    state.corpus_examples = examples
+    payload = {
+        "num_examples": len(examples),
+        "slugs": [ex.slug for ex in examples],
+    }
+    state.artifacts["corpus_summary_json"] = payload
+    return payload
+
 TOOLS: dict[str, ToolFn] = {
     "extract_jd_requirements": tool_extract_jd_requirements,
     "find_resume_evidence": tool_find_resume_evidence,

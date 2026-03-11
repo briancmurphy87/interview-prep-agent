@@ -1,0 +1,91 @@
+                                      Brian Murphy
+Chicago, IL | 805-698-5295 | briancmurphy87@gmail.com | linkedin.com/in/briancmurphy87 | github.com/briancmurphy87
+
+Summary
+Senior software engineer with 12+ years building high-performance distributed systems, data pipelines and
+developer platforms. Experience designing production infrastructure for automated trading systems,
+decentralized finance platforms and quantitative research workflows. Strong background in Python and modern
+C++ with deep experience building APIs, integration layers and internal tooling used by engineers and
+researchers. Interested in applying large-scale systems engineering and AI-driven automation and workflow
+systems for enterprise productivity platforms.
+
+Core Skills
+• Programming: Python, C++11–C++20, Go, Solidity; working knowledge of Rust, Java and JavaScript
+• Backend Systems: Distributed systems, API design, microservices, event-driven architectures
+• Data & AI Systems: Real-time data pipelines, schema validation, ML frameworks, feature engineering,
+  research infrastructure, simulation platforms
+• Cloud & Infrastructure: AWS, CI/CD pipelines, containerized services, automated testing frameworks
+• Developer Productivity: AI-assisted development, code generation, refactoring and automated test
+  scaffolding within production engineering workflows
+• Integrations: Third-party APIs, financial exchanges, blockchain protocols, data vendors
+• Collaboration: Technical leadership, cross-functional partnerships, stakeholder communication
+
+Work Experience
+Striker Labs                                                                                            Remote
+Head of Quantitative Engineering                                                            Dec 2023 - May 2025
+
+• Architected internal research and execution platform used by engineers, researchers and portfolio managers to
+  develop, test and deploy algorithmic strategies across multiple blockchain networks
+• Designed Python-based frameworks for strategy development, simulation and production deployment built on
+  top of Rust-based market data and order management infrastructure
+• Built internal developer tooling enabling engineers and researchers to experiment with strategy signals and
+  deploy production trading models more efficiently
+• Oversaw engineering of blockchain data ingestion pipelines including persistence, health monitoring and
+  analytics tooling
+• Built platform services integrating on-chain data feeds, risk monitoring systems and execution engines into
+  unified operational tooling
+• Developed backtesting and simulation systems enabling large-scale experimentation with trading signals and
+  execution models
+• Led development of strategies, risk management and portfolio rebalancing systems to automate execution of
+  complex, multi-step transactions on the blockchain
+
+Kaleidoscope Capital                                                                       Boston, MA / Remote
+Part-Time Consultant & Quant Developer                                                      Jul 2025 - Dec 2025
+
+• Designed end-to-end trading system spanning market data ingestion, signal computation, order management,
+  risk controls and execution infrastructure
+• Built CI/CD pipeline and automated testing harness enabling safe, rapid and collaborative iteration
+• Implemented core execution and strategy logic in modern C++ with emphasis on deterministic performance
+  and modular system design
+• Evaluated and integrated third-party market data vendors and exchange APIs including reliability
+  benchmarking and failover design
+• Worked closely with portfolio manager to formalize trading concepts into systematic models
+Tower Research Capital                                                                 New York, NY / Chicago, IL
+Senior Quantitative Developer                                                                Apr 2023 - Dec 2023
+• Built automated tooling for evaluating execution quality and trading infrastructure performance
+• Developed tooling for analyzing trading system latency, execution reliability and market response behavior
+Steel Perlot                                                                                               Remote
+Smart Contract & Backend Engineer                                                             Mar 2022 - Jan 2023
+• Designed and implemented backend microservices in Go and Java (Spring), exposing RESTful APIs and
+  integrating analytics workflows with distributed ledger systems
+• Built Python APIs for internal trading teams to automate transactions with smart-contract-based DeFi venues
+• Built and deployed cloud-based validator nodes across multiple blockchains
+TransMarket Group                                                                                      Chicago, IL
+Algorithmic Trader                                                                             May 2013 - Jul 2021
+• Built automated execution and risk systems for systematic trading strategies spanning these futures product
+  groups: US Treasuries, natural gas and metals (precious & industrial)
+• Developed execution infrastructure for data feeds and order routing across global exchanges
+• Led research and development of quantitative trading signals and execution strategies using statistical and
+  machine learning techniques
+
+Education
+University of Chicago                                                                                  Chicago, IL
+M.S. Computer Science, GPA: 3.7                                                                         Jan 2023
+UC Berkeley - Haas School of Business                                                                 Berkeley, CA
+M.S. Financial Engineering                                                                               Apr 2013
+Washington University in St. Louis                                                                  St. Louis, MO
+B.S. Systems Science & Engineering, Minor in Computer Science                                           May 2010
+Honors: Three-year letter winner as tight-end for Men’s Varsity Football Team (NCAA Division III)
+
+Certifications
+AWS Certified Cloud Practitioner
+
+Projects
+SigningDay.xyz
+Co-founder & Engineer                                                                   Nov 2021 - Apr 2022
+Designed and launched an NFT marketplace enabling collegiate athletes to monetize name-image-likeness rights
+• Designed and implemented Solidity smart contract powering marketplace transaction logic
+• Built React-based web frontend integrating Web3.js APIs with blockchain RPC services to support secure
+  smart contract interaction and transaction workflows
+• Launched platform during the 2022 NCAA basketball tournament generating $10k+ in initial NFT sales
+

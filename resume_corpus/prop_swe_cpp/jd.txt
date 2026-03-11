@@ -1,0 +1,23 @@
+We are looking for a highly skilled software engineer to join our Chicago team. In this role, you will be responsible for designing, developing, and optimizing software solutions that meet the hardware-specific demands of our global trading infrastructure. Working within a fast-paced, dynamic tech environment, you'll collaborate closely with global teams, leveraging rapid feedback loops to drive continuous improvement and innovation.
+
+The ideal candidate brings extensive experience in writing low-level, high-performance C++ code and a proven track record of working effectively alongside hardware teams to create tightly integrated, efficient solutions.
+
+Your Core Responsibilities:
+
+Work closely with hardware engineers and cross-functional teams to understand requirements and implement effective solutions
+Write highly-performant software solutions to control and interface with hardware components
+Optimize components of our system to achieve low-latency and high-throughput capabilities
+Ensure a seamless integration of new applications and enhancements to the existing trading infrastructure
+
+Your Skills and Experience:
+
+Bachelor’s or Master’s degree in Computer Science, Computer Engineering, or related field of study
+5+ years of professional experience using modern C++ in a low-latency environment
+Experience with software development for hardware platforms
+Knowledge of trading systems and financial markets is a strong plus
+Excellent problem-solving and communication skills
+
+The Base Salary range for the role is included below. Base salary is only one component of total compensation; all full-time, permanent positions are eligible for a discretionary bonus and benefits, including paid leave and insurance.
+
+Salary Range
+$130,000 - $215,000 USD

@@ -1,0 +1,84 @@
+                                          Brian Murphy
+Chicago, IL | 805-698-5295 | briancmurphy87@gmail.com | linkedin.com/in/briancmurphy87 | github.com/briancmurphy87
+
+Summary
+Cloud engineer and systems architect with 12+ years building high-performance ML/analytics pipelines,
+distributed compute systems and cloud-hosted research platforms across financial-services and digital-asset
+environments. Deep experience developing feature engineering frameworks, simulation engines and large-scale
+time-series pipelines in Python/C++, with a strong background in performance engineering, reliability,
+observability and containerized environments. Skilled at using scalable compute architectures (on-premise or on
+cloud platforms) to implement end-to-end ML workflows: from data acquisition to evaluation and deployment.
+Strong ability to debug complex system behaviors and collaborate with customers, engineers and researchers.
+
+Core Skills
+Cloud & Infra AWS (EC2, S3, EBS, RDS, Lambda, Batch), distributed systems, containerized compute
+ML Systems        Python ML pipelines, PyArrow, NumPy, Pandas, feature engineering, model evaluation, simulation engines
+Data Eng          Deterministic pipelines, schema validation (Pydantic), data modeling, time-series architecture, data quality
+DevOps            Docker, Kubernetes, GitHub Actions, CI/CD, observability, metrics/logging
+Languages         Python, C++17/20, Go, Solidity, SQL, Java, Rust
+Performance       Vectorization, memory optimization, profiling, distributed tracing, HPC/GPU coursework
+
+
+AI/ML Engineering Highlights
+• Built end-to-end ML pipelines: ingestion → validation → feature generation → model evaluation → simulation
+• Built scalable compute workflows using vectorized Python, PyArrow and distributed system patterns.
+• Implemented observability layers for ML workflows: metrics, health checks, structured logging.
+• Performed large-scale parameter sweeps and optimization loops for systematic strategy modeling.
+• Academic foundation in high-performance computing with experience building and profiling GPU-accelerated code.
+
+Work Experience
+Striker Labs                                                                                                       Remote
+Head of Quantitative Engineering                                                                       Dec 2023 - May 2025
+• Designed and operated a cloud-hosted ML/analytics platform (AWS EC2/RDS/Lambda) supporting feature engineering,
+  simulation and production decision workflows across multiple DeFi venues.
+• Built deterministic, large-scale time-series pipelines using Python, PyArrow and Pydantic, ensuring ordering correctness,
+  multi-source alignment and strong schema validation.
+• Developed a modular ML research framework enabling feature engineering, model selection, batch parameter sweeps and
+  RL-inspired performance-feedback loops.
+• Engineered high-performance compute pipelines using vectorization and optimized memory layouts, reducing simulation
+  runtime by ∼95% (15h → 1h) and tripling feasible backtest horizons (6 → 18h months).
+• Implemented observability and reliability layers (i.e. structured logs, metrics and health checks) to diagnose pipeline
+  failures, model-live drift and RPC issues.
+• Developed a fault-tolerant execution architecture that reduced failed transactions by 50% across multiple chains.
+• Collaborated with engineers and client teams to refine data requirements, system behavior and performance expectations.
+Tower Research Capital                                                                          New York, NY / Chicago, IL
+Quantitative Developer                                                                                Apr 2023 - Dec 2023
+• Built analytics pipelines for model evaluation, execution diagnostics and feature research across fixed-income and energy
+  markets.
+• Developed real-time Grafana dashboards visualizing predictive features, system diagnostics and execution behavior.
+• Iterated with traders and researchers to refine ML data workflows, improving pipeline efficiency and research throughput.
+Steel Perlot                                                                                                          Remote
+Smart Contract & Backend Engineer                                                                        Mar 2022 - Jan 2023
+• Built Go/Python backend systems integrating analytics workflows with Ethereum and Cosmos smart-contract
+  ecosystems.
+• Built Python control layer enabling internal trading operations to safely interface with protocol smart contracts.
+• Deployed validator and service nodes (in AWS) focusing on reliability, monitoring and infrastructure observability.
+• Collaborated with other verticals to deliver shared backend components and improve system reliability
+TransMarket Group                                                                                                Chicago, IL
+Algorithmic Trader                                                                                       May 2013 - Jul 2021
+• Engineered time-series feature pipelines, execution engines and microstructure-driven ML signals across multiple asset
+  classes and execution strategies.
+• Designed scalable systems for quoting, hedging, risk modeling and predictive-feature generation.
+• Built historical analysis workflows for large-scale model evaluation and short-term signal research.
+• Mentored junior researchers on feature engineering, reproducibility and ML-driven research.
+
+Projects
+SigningDay.xyz
+Co-founder & Engineer                                                                                    Nov 2021 - Apr 2022
+
+• Built full-stack decentralized application for student-athlete NIL monetization.
+• Implemented Solidity smart contract, Web3 front-end, marketplace logic and user onboarding workflows.
+• Launched during the 2022 NCAA basketball tournaments with over $10K in NFT sales.
+
+Education
+University of Chicago                                                                             Chicago, IL
+M.S. Computer Science, GPA: 3.7                                                                     Jan 2023
+Relevant Coursework: High-Performance Computing (GPUs), Computer Architecture (Assembly), Advanced C++
+UC Berkeley - Haas School of Business                                                                           Berkeley, CA
+M.S. Financial Engineering                                                                                         Apr 2013
+Washington University in St. Louis                                                                             St. Louis, MO
+B.S. Systems Science & Engineering, Minor in Computer Science                                                      May 2010
+
+Certifications
+AWS Certified Cloud Practitioner
+

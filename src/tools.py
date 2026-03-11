@@ -5,9 +5,10 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any, Callable
 
-from src.agent_state import AgentState
+from src.agent_state import AgentState, CorpusExample
 
 
 ToolResult = dict[str, Any]
@@ -74,6 +75,77 @@ def _resume_lines(state: AgentState) -> list[str]:
 def _count_phrase_occurrences(text: str, phrase: str) -> int:
     pattern = re.escape(phrase.lower())
     return len(re.findall(pattern, text))
+
+
+def _markdown_to_text(text: str) -> str:
+    """
+    Lightweight markdown-to-text normalization.
+    Good enough for job specs stored as .md.
+    """
+    text = text.replace("\r\n", "\n")
+
+    # links: [label](url) -> label
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+
+    # wiki links: [[PyTorch]] -> PyTorch
+    text = re.sub(r"\[\[([^\]]+)\]\]", r"\1", text)
+
+    # emphasis / bold / code markers
+    text = re.sub(r"[*_`>#]", "", text)
+
+    # Markdown headings / bullets
+    text = re.sub(r"^\s*[-+]\s+", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*#{1,6}\s*", "", text, flags=re.MULTILINE)
+
+    # collapse whitespace
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = re.sub(r"[ \t]+", " ", text)
+
+    return text.strip()
+
+# Generic reader for .txt and .md
+def _read_textish_file(path: Path) -> str:
+    raw = path.read_text(encoding="utf-8").strip()
+    if path.suffix.lower() == ".md":
+        return _markdown_to_text(raw)
+    return raw
+
+
+def _keyword_overlap_score(a: str, b: str) -> int:
+    a_tokens = {t for t in _tokenize(a) if t not in _STOPWORDS}
+    b_tokens = {t for t in _tokenize(b) if t not in _STOPWORDS}
+    return len(a_tokens & b_tokens)
+
+
+def tool_retrieve_similar_resume_examples(
+    state: AgentState,
+    top_k: int = 2,
+) -> dict[str, Any]:
+    """
+    Rank corpus examples by target JD similarity.
+    """
+    if not state.corpus_examples:
+        return {"matches": []}
+
+    scored: list[tuple[int, CorpusExample]] = []
+    for example in state.corpus_examples:
+        score = _keyword_overlap_score(state.jd_text, example.jd_text)
+        scored.append((score, example))
+
+    scored.sort(key=lambda pair: (-pair[0], pair[1].slug))
+    matches = [
+        {
+            "slug": example.slug,
+            "score": score,
+            "jd_preview": example.jd_text[:300],
+            "resume_preview": example.resume_variant_text[:300],
+        }
+        for score, example in scored[:top_k]
+        if score > 0
+    ]
+
+    state.artifacts["retrieved_examples_json"] = {"matches": matches}
+    return {"matches": matches}
 
 
 def tool_extract_jd_requirements(state: AgentState, top_k: int = 15) -> ToolResult:
@@ -294,10 +366,118 @@ def tool_dump_state_summary(state: AgentState) -> ToolResult:
     }
 
 
+def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any]:
+    """
+    Load corpus examples from:
+      resume_corpus/<slug>/jd.txt or jd.md
+      resume_corpus/<slug>/resume_variant.txt
+    """
+    base = Path(corpus_dir)
+    if not base.exists():
+        raise FileNotFoundError(f"Corpus directory does not exist: {corpus_dir}")
+
+    examples: list[CorpusExample] = []
+
+    for child in sorted(base.iterdir()):
+        if not child.is_dir():
+            continue
+
+        jd_path_txt = child / "jd.txt"
+        jd_path_md = child / "jd.md"
+        resume_variant_path = child / "resume_variant.txt"
+
+        if not resume_variant_path.exists():
+            continue
+
+        jd_path = None
+        if jd_path_txt.exists():
+            jd_path = jd_path_txt
+        elif jd_path_md.exists():
+            jd_path = jd_path_md
+
+        if jd_path is None:
+            continue
+
+        examples.append(
+            CorpusExample(
+                slug=child.name,
+                jd_text=_read_textish_file(jd_path),
+                resume_variant_text=_read_textish_file(resume_variant_path),
+            )
+        )
+
+    state.corpus_examples = examples
+    payload = {
+        "num_examples": len(examples),
+        "slugs": [ex.slug for ex in examples],
+    }
+    state.artifacts["corpus_summary_json"] = payload
+    return payload
+
+
+def tool_generate_target_resume(state: AgentState, llm: Any, top_k: int = 2) -> dict[str, Any]:
+    """
+    Use target JD + raw resume + top corpus examples to generate a targeted resume draft.
+    """
+    matches = state.artifacts.get("retrieved_examples_json", {}).get("matches", [])
+    selected_slugs = {m["slug"] for m in matches[:top_k]}
+
+    selected_examples = [
+        ex for ex in state.corpus_examples
+        if ex.slug in selected_slugs
+    ]
+
+    examples_block = "\n\n".join(
+        f"=== EXAMPLE: {ex.slug} ===\n"
+        f"EXAMPLE JD:\n{ex.jd_text}\n\n"
+        f"EXAMPLE RESUME VARIANT:\n{ex.resume_variant_text}"
+        for ex in selected_examples
+    )
+
+    prompt = f"""
+You are helping create a targeted resume variant.
+
+TARGET JOB DESCRIPTION:
+{state.jd_text}
+
+RAW BASE RESUME:
+{state.resume_text}
+
+REFERENCE EXAMPLES FROM PRIOR SUCCESSFUL / HIGH-QUALITY VARIANTS:
+{examples_block if examples_block else "(none)"}
+
+Instructions:
+- Write a tailored plain-text resume variant for the target role.
+- Reuse only facts supported by the raw base resume.
+- Use the reference examples only for style, framing, emphasis, and bullet construction.
+- Do not invent experience.
+- Preserve a professional, concise tone.
+- Focus on aligning to the target job description.
+- Output only the resume text.
+""".strip()
+
+    generated = llm.complete(
+        system="You are a precise resume tailoring assistant. Output only resume text.",
+        user=prompt,
+    )
+
+    state.artifacts["target_resume_txt"] = generated
+    state.artifacts["generation_metadata_json"] = {
+        "used_examples": [ex.slug for ex in selected_examples]
+    }
+    return {
+        "ok": True,
+        "bytes": len(generated.encode("utf-8")),
+        "used_examples": [ex.slug for ex in selected_examples],
+    }
+
+
 TOOLS: dict[str, ToolFn] = {
     "extract_jd_requirements": tool_extract_jd_requirements,
     "find_resume_evidence": tool_find_resume_evidence,
     "score_resume_fit": tool_score_resume_fit,
     "render_report": tool_render_report,
     "dump_state_summary": tool_dump_state_summary,
+    "load_resume_corpus": tool_load_resume_corpus,
+    "retrieve_similar_resume_examples": tool_retrieve_similar_resume_examples,
 }

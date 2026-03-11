@@ -1,0 +1,72 @@
+- ### Minimum qualifications:
+    - Bachelor's degree in Computer Science or equivalent practical experience.
+    - 8 years of experience building ^^machine learning solutions^^ and working with technical customers.
+    - Experience ^^designing cloud enterprise solutions and supporting customer projects to completion.
+    - Experience in one or more discipline areas: 
+        - machine learning, 
+        - recommendation systems, 
+        - natural language processing, 
+        - computer vision, 
+        - pattern recognition, 
+        - agentic workflows, 
+        - genAI, or artificial intelligence.
+    - Experience coding in one or more general purpose languages (e.g., Python, Java, Go, C or C++) 
+        - including data structures, algorithms, and software design.
+- ### Preferred qualifications:
+    - Experience working with 
+        - recommendation engines, data pipelines, or distributed machine learning.
+    - Experience with deep learning frameworks e.g. 
+        - Tensorflow, 
+        - [[PyTorch]]
+            - PyTorch is an open-source deep learning library, originally developed by Meta Platforms and currently developed with support from the Linux Foundation.
+        - [[XGBoost]]
+            - XGBoost (eXtreme Gradient Boosting) is a highly efficient, scalable, and popular open-source machine learning library that implements 
+                - [[gradient boosting]], 
+                - building powerful predictive models by combining many simple decision trees. 
+            - It's known for its speed, accuracy, and portability, running on single machines or distributed systems ([Hadoop](https://www.google.com/search?q=Hadoop&rlz=1C5OZZY_enUS1162US1162&oq=XGBoost&gs_lcrp=EgZjaHJvbWUyEQgAEEUYORhDGLEDGIAEGIoFMgwIARAAGEMYgAQYigUyBwgCEAAYgAQyBwgDEAAYgAQyDwgEEAAYQxiLAxiABBiKBTIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBBzM0M2oxajeoAgCwAgA&sourceid=chrome&ie=UTF-8&ved=2ahUKEwjv3e_jwseRAxVvmIkEHXBuLBkQgK4QegYIAQgAEAY), [Spark](https://www.google.com/search?q=Spark&rlz=1C5OZZY_enUS1162US1162&oq=XGBoost&gs_lcrp=EgZjaHJvbWUyEQgAEEUYORhDGLEDGIAEGIoFMgwIARAAGEMYgAQYigUyBwgCEAAYgAQyBwgDEAAYgAQyDwgEEAAYQxiLAxiABBiKBTIHCAUQABiABDIHCAYQABiABDIHCAcQABiABDIHCAgQABiABDIHCAkQABiABNIBBzM0M2oxajeoAgCwAgA&sourceid=chrome&ie=UTF-8&ved=2ahUKEwjv3e_jwseRAxVvmIkEHXBuLBkQgK4QegYIAQgAEAc)), 
+                - making it a go-to algorithm for winning data science competitions 
+                - and handling large datasets across multiple languages 
+                    - like Python, R, and C++.
+    - Knowledge of [[data warehouse]]ing concepts, 
+        - including data warehouse technical architectures, 
+        - infrastructure components, 
+        - ETL/ ELT 
+        - and reporting/analytic tools and environments 
+            - (e.g., Apache Beam, [[hadoop cluster]], Spark, Pig, Hive, MapReduce, Flume).
+    - Understanding of the** auxiliary practical concerns** 
+        - in production machine learning systems.
+- ### About the job
+    - The Google Cloud Consulting Professional Services team guides customers through the moments that matter most in their cloud journey to help businesses thrive. 
+        - We help customers transform and evolve their business through the use of Google’s global network, web-scale data centers, and software infrastructure. 
+        - As part of an innovative team in this rapidly growing business, you will help shape the future of businesses of all sizes and use technology to connect with customers, employees, and partners.
+    - As a Cloud AI Engineer, you will design and implement machine learning solutions for customer use cases, 
+        - leveraging core Google products including TensorFlow, DataFlow, and Vertex AI. 
+        - You will work with customers to identify opportunities to apply machine learning in their business, and travel to customer sites to deploy solutions and deliver workshops to educate and empower customers. 
+        - Additionally, you will work closely with Product Management and Product Engineering to build and constantly drive excellence in our products.
+    - In this role, you are the Google Engineer working with Google's most ambitious Cloud customers. 
+        - Together with the team you will support customer implementation of Google Cloud products through: architecture guidance, best practices, data migration, capacity planning, implementation, troubleshooting, monitoring, and much more.
+    - Google Cloud accelerates every organization’s ability to digitally transform its business and industry. 
+        - We deliver enterprise-grade solutions that leverage Google’s cutting-edge technology, and tools that help developers build more sustainably. 
+        - Customers in more than 200 countries and territories turn to Google Cloud as their trusted partner to enable growth and solve their most critical business problems.
+    - The US base salary range for this full-time position is 
+        - $177,000-$263,000 + bonus + equity + benefits. 
+        - Our salary ranges are determined by role, level, and location. 
+        - Within the range, individual pay is determined by work location and additional factors, including job-related skills, experience, and relevant education or training. 
+        - Your recruiter can share more about the specific salary range for your preferred location during the hiring process.
+    - Please note that the compensation details listed in US role postings reflect the base salary only, and do not include bonus, equity, or benefits. Learn more about [benefits at Google](https://careers.google.com/benefits/).
+- ### Responsibilities
+    - Act as a trusted technical advisor to customers and solve machine learning issues.
+    - Coach customers on the practical issues in machine learning systems: 
+        - feature extraction and feature definition, 
+        - [[machine learning - data validation]], 
+            - Data validation in machine learning is the crucial process of 
+                - checking data quality (accuracy, completeness, consistency) 
+                - before and during model training, 
+                - using separate **validation datasets** to tune model settings ([hyperparameters](https://www.google.com/search?q=hyperparameters&rlz=1C5OZZY_enUS1162US1162&oq=what+is+data+validation+in+machine+learning&gs_lcrp=EgZjaHJvbWUyCggAEEUYFhgeGDkyCAgBEAAYFhgeMggIAhAAGBYYHjIICAMQABgWGB4yCAgEEAAYFhgeMg0IBRAAGIYDGIAEGIoFMg0IBhAAGIYDGIAEGIoFMg0IBxAAGIYDGIAEGIoFMg0ICBAAGIYDGIAEGIoFMgcICRAAGO8F0gEINDYwM2owajeoAgCwAgA&sourceid=chrome&ie=UTF-8&mstk=AUtExfBa_7QYEseGfNHwDvr1ifr5jUuQuJ2846eny7IaUITalLfOtG8dhB-UsAsa-9tummIh0GCVS5LktloNVrlA5etAEkoTWQLrD6bcysk0h7lzMRxnmTBXevpIlt3xW7gCxcvwKl7Q3o9RW_ft1vjttXV6GTkvMr3hxbpzBQY1TYkC-zHdvLbH5yNtEnSn6oXrjSCVjXAFjvy9Eba3Xxy0GQYSXV8oFqIHhRE6vB7PjnzjTqhBIoUhE0XHDz17OdGeRqrPKFDYXbRZWVWcjvVPmx96&csui=3&ved=2ahUKEwjAveefw8eRAxW0AHkGHWScOYYQgK4QegQIARAE)) and prevent [overfitting](https://www.google.com/search?q=overfitting&rlz=1C5OZZY_enUS1162US1162&oq=what+is+data+validation+in+machine+learning&gs_lcrp=EgZjaHJvbWUyCggAEEUYFhgeGDkyCAgBEAAYFhgeMggIAhAAGBYYHjIICAMQABgWGB4yCAgEEAAYFhgeMg0IBRAAGIYDGIAEGIoFMg0IBhAAGIYDGIAEGIoFMg0IBxAAGIYDGIAEGIoFMg0ICBAAGIYDGIAEGIoFMgcICRAAGO8F0gEINDYwM2owajeoAgCwAgA&sourceid=chrome&ie=UTF-8&mstk=AUtExfBa_7QYEseGfNHwDvr1ifr5jUuQuJ2846eny7IaUITalLfOtG8dhB-UsAsa-9tummIh0GCVS5LktloNVrlA5etAEkoTWQLrD6bcysk0h7lzMRxnmTBXevpIlt3xW7gCxcvwKl7Q3o9RW_ft1vjttXV6GTkvMr3hxbpzBQY1TYkC-zHdvLbH5yNtEnSn6oXrjSCVjXAFjvy9Eba3Xxy0GQYSXV8oFqIHhRE6vB7PjnzjTqhBIoUhE0XHDz17OdGeRqrPKFDYXbRZWVWcjvVPmx96&csui=3&ved=2ahUKEwjAveefw8eRAxW0AHkGHWScOYYQgK4QegQIARAF), 
+                    - ensuring the model generalizes well to new, unseen data, 
+                        - not just memorizes the training examples. 
+                - It's about ensuring "good data goes in" to get reliable, real-world performance out, preventing the "garbage in, garbage out" problem.
+        - monitoring, and management of features and models.
+    - Work with Customers, Partners, and Google Product teams to deliver tailored solutions into production.
+    - Create and deliver best practice recommendations, tutorials, blog articles, and sample code.
+    - Travel up to 30% within the region for meetings, technical reviews, and onsite delivery activities.

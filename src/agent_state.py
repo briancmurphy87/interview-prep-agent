@@ -15,6 +15,13 @@ ArtifactKey = Literal[
 ToolHistoryEntry = dict[str, Any]
 
 @dataclass
+class CorpusExample:
+    slug: str
+    jd_text: str
+    resume_variant_text: str
+
+
+@dataclass
 class AgentState:
     jd_text: str
     resume_text: str
@@ -27,6 +34,8 @@ class AgentState:
 
     # Executed tool calls + results for observability/debugging
     tool_history: list[ToolHistoryEntry] = field(default_factory=list)
+
+    corpus_examples: list[CorpusExample] = field(default_factory=list)
 
     def add_note(self, message: str) -> None:
         self.notes.append(message)

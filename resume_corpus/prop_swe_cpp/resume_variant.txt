@@ -1,0 +1,104 @@
+                                       Brian Murphy
+Chicago, IL | 805-698-5295 | briancmurphy87@gmail.com | linkedin.com/in/briancmurphy87 | github.com/briancmurphy87
+
+Summary
+Experienced engineer with 12+ years building automated trading infrastructure, strategy logic, execution engines
+and quantitative research platforms supporting futures and digital asset markets. Expertise in modern C++,
+Python and distributed systems supporting the full trading lifecycle from signal research and simulation to
+production execution and monitoring.
+
+Core Skills
+• Languages: Python, C++11–C++20, Go, Solidity; working knowledge of Rust and Java
+• Trading Systems: Execution engines, market data infrastructure, exchange connectivity, order routing,
+  microstructure research (time-series analysis and machine learning)
+• Quant Research Infra: Backtesting frameworks, real-time data pipelines, schema validation, deterministic
+  feature pipelines, parameter sweeps, model evaluation
+• Systems Engineering: Low-latency architecture, multi-threading, performance optimization, profiling,
+  cache-aware design
+• General Infra: Linux, CI/CD, distributed systems, observability, cloud environments
+
+Work Experience
+Striker Labs                                                                                               Remote
+Head of Quantitative Engineering                                                               Dec 2023 - May 2025
+
+• Led design, development and operation of a cloud-hosted systematic trading platform across multiple DeFi
+  venues for an institutional client; served as primary technical partner responsible for architecture, reliability,
+  platform evolution and production deployment.
+• Implemented deterministic time-series data pipelines supporting both research workflows and production
+  execution systems with strong validation and reproducibility guarantees.
+• Built modular research framework supporting feature engineering, signal development/experimentation,
+  large-scale parameter sweeps, simulation and deployment.
+• Engineered high-performance compute pipelines using vectorization and optimized memory layouts, reducing
+  simulation runtime by ∼95% (15h → 1h) and tripling feasible backtest horizons (6 → 18 months).
+• Implemented fault-tolerant execution architecture reducing failed transactions by ∼50%.
+
+Tower Research Capital                                                                  New York, NY / Chicago, IL
+Senior Quantitative Developer                                                                 Apr 2023 - Dec 2023
+
+• Delivered execution and risk infrastructure supporting multiple systematic futures strategies spanning CME,
+  ICE and EUREX.
+• Built and maintained low-latency C++ infrastructure processing high-volume market data and execution flows
+  in distributed environments.
+• Designed multithreaded systems with strict memory management constraints to optimize throughput and
+  maintain low-variance latency.
+• Developed automated performance analysis tooling to identify bottlenecks in networking, storage and compute
+  layers under production load.
+• Built distributed monitoring systems and dashboards enabling rapid triage of production anomalies.
+Steel Perlot                                                                                               Remote
+Smart Contract & Backend Engineer                                                             Mar 2022 - Jan 2023
+
+• Designed backend microservices in Go and Java exposing REST APIs that integrated analytics workflows with
+  distributed ledger infrastructure.
+• Built Python APIs enabling internal users to interact with decentralized protocols and manage positions.
+• Deployed and operated distributed validator infrastructure with emphasis on monitoring, uptime and
+  operational reliability.
+
+TransMarket Group                                                                                      Chicago, IL
+Algorithmic Trader & Systems Engineer                                                          May 2013 - Jul 2021
+
+• Designed reusable execution frameworks adopted across multiple trading desks, standardizing order routing,
+  risk checks and monitoring workflows.
+• Built backend infrastructure for market data ingestion, order routing and risk monitoring in latency-sensitive
+  production environments.
+• Embedded algorithmic trader across multiple futures desks covering US Treasuries (futures, on-the-run and
+  off-the-run cash), natural gas, precious and industrial metals. Delivered execution and risk infrastructure
+  supporting systematic, relative-value and market-making strategies across CME, ICE, TOCOM and US
+  Treasury trading venues (BrokerTec, LiquidityEdge, DealerWeb, Fenics).
+• Led research projects analyzing market microstructure and order flow to improve short-term execution
+  strategies and signal calibration.
+• Monitored and debugged live trading systems during market hours, performing real-time root cause analysis of
+  execution anomalies to maintain trading continuity.
+
+Kaleidoscope Capital                                                                         Boston, MA / Remote
+Part-Time Consultant & Quant Developer                                                        Jul 2025 - Dec 2025
+
+• Engaged directly with portfolio leadership to design and implement a low-latency futures trading platform for
+  a new systematic trading vertical.
+• Architected and implemented an end-to-end trading platform spanning market data ingestion, signal
+  computation, position management, risk checks and execution infrastructure.
+• Implemented core execution and strategy logic in modern C++ emphasizing deterministic performance,
+  cache-aware memory design and modular extensibility.
+• Evaluated and integrated third-party market data and exchange APIs, benchmarking latency and reliability
+  characteristics.
+
+Education
+University of Chicago                                                                                  Chicago, IL
+M.S. Computer Science, GPA: 3.7                                                                         Jan 2023
+UC Berkeley - Haas School of Business                                                                 Berkeley, CA
+M.S. Financial Engineering                                                                               Apr 2013
+Washington University in St. Louis                                                                  St. Louis, MO
+B.S. Systems Science & Engineering, Minor in Computer Science                                           May 2010
+Honors: Three-year letter winner as tight-end for Men’s Varsity Football Team (NCAA Division III)
+
+Certifications
+AWS Certified Cloud Practitioner
+Projects
+SigningDay.xyz
+Co-founder & Engineer                                                                   Nov 2021 - Apr 2022
+Designed and launched an NFT marketplace enabling collegiate athletes to monetize name-image-likeness rights
+
+• Defined product requirements, transaction economics and system architecture from inception.
+• Designed and launched a full-stack marketplace platform supporting secure transactional workflows.
+• Led full lifecycle product delivery from concept through launch, generating $10K+ in initial sales during 2022
+  NCAA tournaments (link).
+

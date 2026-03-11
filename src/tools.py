@@ -414,6 +414,61 @@ def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any
     state.artifacts["corpus_summary_json"] = payload
     return payload
 
+
+def tool_generate_target_resume(state: AgentState, llm: Any, top_k: int = 2) -> dict[str, Any]:
+    """
+    Use target JD + raw resume + top corpus examples to generate a targeted resume draft.
+    """
+    matches = state.artifacts.get("retrieved_examples_json", {}).get("matches", [])
+    selected_slugs = {m["slug"] for m in matches[:top_k]}
+
+    selected_examples = [
+        ex for ex in state.corpus_examples
+        if ex.slug in selected_slugs
+    ]
+
+    examples_block = "\n\n".join(
+        f"=== EXAMPLE: {ex.slug} ===\n"
+        f"EXAMPLE JD:\n{ex.jd_text}\n\n"
+        f"EXAMPLE RESUME VARIANT:\n{ex.resume_variant_text}"
+        for ex in selected_examples
+    )
+
+    prompt = f"""
+You are helping create a targeted resume variant.
+
+TARGET JOB DESCRIPTION:
+{state.jd_text}
+
+RAW BASE RESUME:
+{state.resume_text}
+
+REFERENCE EXAMPLES FROM PRIOR SUCCESSFUL / HIGH-QUALITY VARIANTS:
+{examples_block if examples_block else "(none)"}
+
+Instructions:
+- Write a tailored plain-text resume variant for the target role.
+- Reuse only facts supported by the raw base resume.
+- Use the reference examples only for style, framing, emphasis, and bullet construction.
+- Do not invent experience.
+- Preserve a professional, concise tone.
+- Focus on aligning to the target job description.
+- Output only the resume text.
+""".strip()
+
+    generated = llm.complete(
+        system="You are a precise resume tailoring assistant. Output only resume text.",
+        user=prompt,
+    )
+
+    state.artifacts["target_resume_txt"] = generated
+    return {
+        "ok": True,
+        "bytes": len(generated.encode("utf-8")),
+        "used_examples": [ex.slug for ex in selected_examples],
+    }
+
+
 TOOLS: dict[str, ToolFn] = {
     "extract_jd_requirements": tool_extract_jd_requirements,
     "find_resume_evidence": tool_find_resume_evidence,

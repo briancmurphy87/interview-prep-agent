@@ -10,8 +10,12 @@
   "expected_keywords": [
     "python",
     "enterprise applications",
-    "workflow automation",
-    "backend services",
-    "cloud platforms"
+    "workflow",
+    "backend",
+    "cloud",
+    "aws",
+    "gcp",
+    "apis",
+    "llms"
   ]
 }

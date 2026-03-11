@@ -28,6 +28,8 @@ _REQUIREMENT_HINTS = {
     "cxo", "management", "presentations", "architecture", "architecting", "saas",
     "enterprise", "software", "data", "security", "resilience", "poc", "demo", "demos",
     "stakeholders", "advisor", "trusted", "solutions", "business",
+    "python", "java", "api", "apis", "genai", "llm", "workflow", "workflows",
+    "integration", "integrations", "applications", "services", "automation"
 }
 
 

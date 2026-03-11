@@ -1,3 +1,6 @@
+# ----------------------------
+# 4) Agent loop
+# ----------------------------
 from __future__ import annotations
 
 import json
@@ -8,9 +11,6 @@ from src.agent_state import AgentState
 from src.llm import LLM
 from src.tools import TOOLS
 
-# ----------------------------
-# 4) Agent loop
-# ----------------------------
 ToolName = Literal[
     "extract_jd_requirements",
     "find_resume_evidence",

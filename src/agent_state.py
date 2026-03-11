@@ -1,3 +1,6 @@
+# ----------------------------
+# 1) Agent state
+# ----------------------------
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -11,9 +14,6 @@ ArtifactKey = Literal[
 
 ToolHistoryEntry = dict[str, Any]
 
-# ----------------------------
-# 1) Agent state
-# ----------------------------
 @dataclass
 class AgentState:
     jd_text: str

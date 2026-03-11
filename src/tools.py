@@ -1,3 +1,7 @@
+#
+# ----------------------------
+# 2) Tools
+# ----------------------------
 from __future__ import annotations
 
 # import json
@@ -5,10 +9,6 @@ import re
 from typing import Any, Callable
 
 from src.agent_state import AgentState
-#
-# ----------------------------
-# 2) Tools
-# ----------------------------
 
 ToolResult = dict[str, Any]
 ToolFn = Callable[..., ToolResult]

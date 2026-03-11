@@ -1,10 +1,10 @@
+# ----------------------------
+# 3) LLM interface
+# ----------------------------
 from __future__ import annotations
 
 import os
 
-# ----------------------------
-# 3) LLM interface
-# ----------------------------
 class LLM:
     """
     Thin wrapper around the OpenAI Responses API.

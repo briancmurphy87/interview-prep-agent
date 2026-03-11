@@ -1,1 +1,7 @@
 .env
+.idea/
+venv/
+interview-prep-agent.iml
+#modules.xml
+#profiles_settings.xml
+#vcs.xml

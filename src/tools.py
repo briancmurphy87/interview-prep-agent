@@ -5,9 +5,10 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any, Callable
 
-from src.agent_state import AgentState
+from src.agent_state import AgentState, CorpusExample
 
 
 ToolResult = dict[str, Any]
@@ -74,6 +75,40 @@ def _resume_lines(state: AgentState) -> list[str]:
 def _count_phrase_occurrences(text: str, phrase: str) -> int:
     pattern = re.escape(phrase.lower())
     return len(re.findall(pattern, text))
+
+
+def _markdown_to_text(text: str) -> str:
+    """
+    Lightweight markdown-to-text normalization.
+    Good enough for job specs stored as .md.
+    """
+    text = text.replace("\r\n", "\n")
+
+    # links: [label](url) -> label
+    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
+
+    # wiki links: [[PyTorch]] -> PyTorch
+    text = re.sub(r"\[\[([^\]]+)\]\]", r"\1", text)
+
+    # emphasis / bold / code markers
+    text = re.sub(r"[*_`>#]", "", text)
+
+    # markdown headings / bullets
+    text = re.sub(r"^\s*[-+]\s+", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*#{1,6}\s*", "", text, flags=re.MULTILINE)
+
+    # collapse whitespace
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = re.sub(r"[ \t]+", " ", text)
+
+    return text.strip()
+
+# Generic reader for .txt and .md
+def _read_textish_file(path: Path) -> str:
+    raw = path.read_text(encoding="utf-8").strip()
+    if path.suffix.lower() == ".md":
+        return _markdown_to_text(raw)
+    return raw
 
 
 def tool_extract_jd_requirements(state: AgentState, top_k: int = 15) -> ToolResult:

@@ -462,6 +462,9 @@ Instructions:
     )
 
     state.artifacts["target_resume_txt"] = generated
+    state.artifacts["generation_metadata_json"] = {
+        "used_examples": [ex.slug for ex in selected_examples]
+    }
     return {
         "ok": True,
         "bytes": len(generated.encode("utf-8")),

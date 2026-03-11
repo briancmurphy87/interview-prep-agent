@@ -36,7 +36,7 @@ class FinalAction:
 
 SYSTEM = """You are an Interview Prep Agent.
 
-You can do two related workflows:
+You support two workflows:
 
 1) Analysis workflow:
 - analyze job description vs resume
@@ -60,13 +60,20 @@ Available tools:
 
 Rules:
 - Use tools instead of guessing when tools can provide the information.
-- For resume synthesis, prefer this sequence:
+- If desired_output == "target_resume", you MUST prioritize the resume synthesis workflow.
+- If desired_output == "target_resume", do not call render_report unless resume generation fails.
+- If desired_output == "target_resume", prefer this sequence:
   1. load_resume_corpus
   2. extract_jd_requirements
   3. retrieve_similar_resume_examples
   4. generate_target_resume
   5. final
-- Do not return final until either report_md or target_resume_txt exists in artifacts.
+- If desired_output == "report", prefer this sequence:
+  1. extract_jd_requirements
+  2. score_resume_fit
+  3. render_report
+  4. final
+- Do not return final until the requested output artifact exists.
 - Return JSON only.
 
 Tool call:
@@ -88,6 +95,7 @@ def _build_user_prompt(state: AgentState) -> str:
             "has_report": "report_md" in state.artifacts,
             "has_target_resume": "target_resume_txt" in state.artifacts,
             "corpus_dir": state.artifacts.get("corpus_dir"),
+            "desired_output": state.artifacts.get("desired_output"),
         },
         indent=2,
     )
@@ -254,28 +262,42 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 10) -> AgentState:
             continue
 
         if isinstance(action, FinalAction):
+            desired_output = state.artifacts.get("desired_output", "report")
             has_report = "report_md" in state.artifacts
             has_target_resume = "target_resume_txt" in state.artifacts
 
-            if not has_report and not has_target_resume:
+            if desired_output == "target_resume" and not has_target_resume:
                 state.add_note(
-                    "Model tried to finish before producing an output artifact."
+                    "Model tried to finish before producing target_resume_txt."
                 )
+                try:
+                    from src.tools import tool_generate_target_resume
+                    result = tool_generate_target_resume(
+                        state=state,
+                        llm=llm,
+                        top_k=2,
+                    )
+                    state.add_tool_history(
+                        tool_name="generate_target_resume",
+                        args={"top_k": 2},
+                        result=result,
+                    )
+                except Exception as e:
+                    state.add_note(f"Fallback generate_target_resume failed: {e}")
 
-                # Best-effort fallback: if fit-analysis artifacts exist, render report.
-                if (
-                    "requirements_json" in state.artifacts
-                    or "fit_analysis_json" in state.artifacts
-                ):
-                    try:
-                        result = TOOLS["render_report"](state)
-                        state.add_tool_history(
-                            tool_name="render_report",
-                            args={},
-                            result=result,
-                        )
-                    except Exception as e:
-                        state.add_note(f"Fallback render_report failed: {e}")
+            elif desired_output == "report" and not has_report:
+                state.add_note(
+                    "Model tried to finish before producing report_md."
+                )
+                try:
+                    result = TOOLS["render_report"](state)
+                    state.add_tool_history(
+                        tool_name="render_report",
+                        args={},
+                        result=result,
+                    )
+                except Exception as e:
+                    state.add_note(f"Fallback render_report failed: {e}")
 
             return state
 

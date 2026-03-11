@@ -1,0 +1,180 @@
+                              Brian Conor Murphy
+                                              Chicago, IL 60622
+
+Experienced software engineer with a keen interest in technology, financial markets, and continuous
+learning. Over a decade of expertise in systematic trading where I have developed algorithmic
+strategies for traditional futures markets, cryptocurrency markets and decentralized finance
+platforms. My work has spanned all phases of the trading stack from core infrastructure to execution
+logic, market microstructure/signal research to strategy ideation and strategy operation. Effective
+communicator who is able to simplify complex technical concepts for various audiences while
+highlighting their business rationale. Accustomed to dynamic environments, that demand crafting a
+forward-looking strategic vision while remaining adaptable to change.
+
+
+
+                                 Programming - Professional
+   Python, Pydantic and computing packages:                      C++11 through C++20 for developing
+   Pandas, Cython, SciKit-Learn                                  algorithmic trading strategies
+   Decentralized application (Dapp) design using                 Signal research, time-series analysis and
+   Web3.js and Go along with Solidity for Smart                  machine learning
+   Contract development
+
+
+                                             Work history
+Part Time Consultant & Quant Developer
+Kaleidoscope Capital, Boston, MA (Remote)                                             July 2025 - December 2025
+   Engaged to design and implement a low-latency systematic futures trading platform for a newly launched
+   strategy vertical.
+   Architected end-to-end trading stack spanning market data ingestion, signal computation, order
+   management, risk controls and execution infrastructure.
+   Implemented core strategy and execution logic in modern C++ (C++17/20), emphasizing deterministic
+   performance, cache-aware memory design and modular research extensibility.
+   Designed CI/CD pipeline and automated testing harness to support rapid research iteration and controlled
+   production deployment.
+   Led evaluation and technical integration of third-party market data and exchange gateway vendors,
+   including API benchmarking and reliability testing.
+   Partnered directly with portfolio manager to formalize discretionary concepts into systematic signal and
+   execution models.
+
+Head of Quantitative Engineering
+Striker Labs, Remote                                                                 December 2023 - May 2025
+   Worked within a small team of engineers, researchers and traders to build a complete trading platform
+   product for large financial institutions to access the Decentralized Finance (DeFi) space
+   Abiding the needs of our initial client and backer, the platform was built to access a breadth of DeFi venues
+   (across many block-chains); provide out-of-the-box yield-bearing strategies ; and provide features for all
+   requisite parts of managing a systematic trading operation (i.e. data and position feeds, strategy, on-chain
+   execution, risk alerting & management, and the entire front-end experience)
+   Designed and implemented high-level frameworks (primarily in Python) within nascent trading platform
+   (built upon Rust-based data feeds and order-management system) to enable development, research,
+   deployment and operation of strategies
+   Owned end-to-end risk for subset of those strategies focused on providing liquidity on UniswapV3
+   marketplace across many chains
+   Wrote strategy logic's heuristics and frameworks to enable experimentation with many permutations of
+   strategy signals and execution models
+   Researched, back-tested and identified profitable realizations of aforementioned permutations
+   Built framework to reconcile back testing results against live-trading results within reason
+   Built re-balancing engine that solved for sequence of operations to get strategy into its target contract
+   balances
+   Built majority of back-testing framework for all strategies' signal research and oversaw engineering of
+   relevant, input blockchain data across phases of persistence, ingest and availability (e.g. data health metrics)
+
+Quantitative Developer
+Tower Research Capital LLC, New York, NY (Hybrid)                                      April 2023 - December 2023
+   Built core risk, execution and visualization tools for upstart team deploying relative value strategies in fixed
+   income and energy products across CME, ICE and EUREX
+   Lead research projects around short-term execution in fixed income markets and extracting edge via market
+   microstructure and order flow
+
+Smart Contract and Backend Engineer
+Steel Perlot, Remote                                                                   March 2022 - January 2023
+   Lead backend engineering for vertical focused on building a human capital marketplace using a combination
+   of Solidity and Go
+   Lead research and development projects within special projects group to provide infrastructure to other
+   verticals and develop products
+   Spearheaded effort to build and run validator nodes on both Ethereum and within Cosmos networks
+   Built backend for Cosmos-based inter-chain decentralized finance (DeFi) product using Go
+   Built Python-based API for internal trading team to enable position entry and management across certain
+   smart-contract-based DeFi protocols
+
+Algorithmic Trader - US Treasuries
+Trans Market Group LLC, Chicago, IL                                                        August 2019 - July 2021
+   Designed and implemented systematic, relative-value strategy and execution logic for off-the-run treasury
+   markets on nascent electronic exchanges
+   Leading post-trade analysis and signal research to improve our short-term execution in treasury futures and
+   cash markets.
+
+Algorithmic Trader - Precious & Industrious Metals
+Trans Market Group LLC, Chicago, IL                                                    January 2019 - August 2019
+   Lead restoration of algorithmic trading presence on a desk with latency-sensitive, inter-continental arbs
+   Built suite of automated performance analysis tools to assess trading software execution and networking
+   infrastructure
+   Conducted signal research to find novel means of improving performance and producing strategies to
+   better-handle large market events.
+
+Algorithmic Trader - Natural Gas Swaps Desk
+Trans Market Group LLC, Chicago, IL                                                 November 2015 - January 2019
+   Transitioned to a nascent desk where most strategies were manually executed by a single trader. Formalized
+   strategies to develop algorithmic execution tools to capture market opportunities. Scaled algorithmic
+   presence yielded significant P&L improvements (doubled profitability in 2016 and in 2017) along with
+   increased market share. Considered one of firm's top-performing desks in 2018
+   As we improved performance the desk increased headcount and I oversaw a small team tasked with research
+   of short-term execution signals and microstructure inefficiencies. Additionally, oversaw development of
+   strategy software.
+   Worked with a team of algorithmic traders from different commodity desks to develop a generic execution
+   system that could service relative value and market making strategies for all commodity desks. Developed this
+   in parallel with a short-term signals module for quoting and hedging inputs.
+   Utilized this execution system to develop desk's first signal-based, algorithmic market making strategy.
+   Worked with head trader to discern market dynamics and order flow characteristics. End product greatly
+   increased volume to enable access to a more favorable tier of trading costs.
+
+Trade Logic Developer - US Treasuries
+Trans Market Group LLC, Chicago, IL                                                 April 2013 - November 2015
+   Built algorithmic risk and execution framework for desk strategies across varying degrees of discretionary
+   overlay
+   Managed quoting, hedging and data feed (i.e. arbitrating microwave and fiber feed) complexities between
+   geographically disparate venues for Treasury cash (BrokerTech and eSpeed) and Treasury futures (CME)
+   contracts
+   Researched and applied new hedging signals via Bayesian classification techniques
+
+Winter Intern for Systematic Equities Trading Group
+Tudor Investment Corporation, Greenwich, CT                                         October 2012 - January 2013
+   Developed Java-based, mid-office applications which provided daily P&L attribution and BARRA risk
+   factor exposures for group's ETF portfolio
+
+
+                                               Education
+University of Chicago
+Master of Science in Computer Science January 2023
+   GPA: 3.70
+   Coursework: Advanced C++ | High Performance Computing | Computer Architecture | Functional
+   Programming | Product Management | Security
+
+University of California, Berkeley - Haas School of Business
+Master of Science in Financial Engineering March 2013
+
+Washington University in St. Louis
+Bachelor of Science in Systems Science & Engineering May 2010
+   Minor(s): Computer Science
+   Honors: Dean's List for Fall 2008 and Fall 2009 semesters; 3 year letter winner as tight-end for Men's Varsity
+   Football Team (NCAA Division III)
+
+
+                                                 Projects
+SigningDay.xyz November 2021 to April 2022
+   Via contacts at Berkley Haas, connected with a small team to pursue this side-project to build a NFT
+   marketplace (on the Ethereum blockchain) to provide college athletes a platform to connect with their
+   supporters and monetize their name-image-likeness which was a monetization avenue that had just been
+   approved by the NCAA
+   At inception, helped devise go-to-market strategy, transaction economics of NFT marketplace and
+   product/front-end design
+   Learned Solidity and decentralized app development from scratch to implement marketplace's smart
+   contract as well as web3-enabled front-end
+   Launched product for the 2022 NCAA Men's and Women's basketball tournament
+   Initial launch garnered more than $10,000 in NFT sales (based on ETH price at that time)
+   etherscan link to SigningDay's smart contract
+                        Additional Education & Certifications
+- AWS - Certified Cloud Practitioner
+- DappCamp.xyz - January 2022 to February 2022
+   An immersive boot camp for onboarding to the Ethereum blockchain ecosystem and, more specifically,
+   writing Smart Contracts in Solidity and broader, Dapp development
+   Culminated with an independent final project for which I built a Dapp that evaluates the quality of
+   underlying media storage for non-fungible tokens (NFTs)
+
+
+                                Websites, Portfolios, Profiles
+   linkedin.com/in/briancmurphy87/
+   github.com/briancmurphy87
+
+
+                                                 Interests
+   Active athlete. Current interest is boxing having trained for several years and participated in exhibition
+   matches. Other active hobbies include golf, snowboarding, weight-training, yoga
+   Other hobbies include travel and improv. Also a voracious reader with interests in science fiction, world
+   history, economics, investing and cooking
+
+
+                                           Volunteer Work
+The Bloc October 2017 to June 2021
+   Associate Board member and volunteer for after-school program providing mentorship and boxing training
+   to in-need, Chicago high school students
+

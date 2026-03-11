@@ -86,6 +86,8 @@ def _build_user_prompt(state: AgentState) -> str:
             "has_requirements": "requirements_json" in state.artifacts,
             "has_fit_analysis": "fit_analysis_json" in state.artifacts,
             "has_report": "report_md" in state.artifacts,
+            "has_target_resume": "target_resume_txt" in state.artifacts,
+            "corpus_dir": state.artifacts.get("corpus_dir"),
         },
         indent=2,
     )
@@ -147,7 +149,25 @@ def agent_step(llm: LLM, state: AgentState) -> ToolAction | FinalAction:
     return _parse_action(raw)
 
 
-def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
+def run_agent(llm: LLM, state: AgentState, max_iters: int = 10) -> AgentState:
+    """
+    Main agent loop.
+
+    Supports two workflows:
+
+    1) Analysis workflow
+       - extract_jd_requirements
+       - score_resume_fit
+       - render_report
+       - final
+
+    2) Resume synthesis workflow
+       - load_resume_corpus
+       - extract_jd_requirements
+       - retrieve_similar_resume_examples
+       - generate_target_resume
+       - final
+    """
     for _ in range(max_iters):
         try:
             action = agent_step(llm, state)
@@ -156,68 +176,135 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
             break
 
         if isinstance(action, ToolAction):
-            if action.tool not in TOOLS:
-                state.add_note(f"Unknown tool requested: {action.tool}")
+            tool_name = action.tool
+            tool_args = action.args
+
+            if tool_name == "generate_target_resume":
+                try:
+                    from src.tools import tool_generate_target_resume
+
+                    result = tool_generate_target_resume(
+                        state=state,
+                        llm=llm,
+                        **tool_args,
+                    )
+                    state.add_tool_history(
+                        tool_name=tool_name,
+                        args=tool_args,
+                        result=result,
+                    )
+                    state.add_note(f"Ran {tool_name}")
+                except TypeError as e:
+                    state.add_note(f"Tool argument mismatch for {tool_name}: {e}")
+                    state.add_tool_history(
+                        tool_name=tool_name,
+                        args=tool_args,
+                        error=f"argument_mismatch: {e}",
+                    )
+                except Exception as e:
+                    state.add_note(f"Tool execution failed for {tool_name}: {e}")
+                    state.add_tool_history(
+                        tool_name=tool_name,
+                        args=tool_args,
+                        error=f"execution_failed: {e}",
+                    )
+                continue
+
+            if tool_name not in TOOLS:
+                state.add_note(f"Unknown tool requested: {tool_name}")
                 state.add_tool_history(
-                    tool_name=action.tool,
-                    args=action.args,
+                    tool_name=tool_name,
+                    args=tool_args,
                     error="unknown_tool",
                 )
                 continue
 
             try:
-                result = TOOLS[action.tool](state, **action.args)
+                # Small convenience: if the model asks to load the corpus
+                # without specifying a path, fall back to state.artifacts["corpus_dir"]
+                if tool_name == "load_resume_corpus" and "corpus_dir" not in tool_args:
+                    corpus_dir = state.artifacts.get("corpus_dir")
+                    if corpus_dir:
+                        tool_args = {
+                            **tool_args,
+                            "corpus_dir": corpus_dir,
+                        }
+
+                result = TOOLS[tool_name](state, **tool_args)
                 state.add_tool_history(
-                    tool_name=action.tool,
-                    args=action.args,
+                    tool_name=tool_name,
+                    args=tool_args,
                     result=result,
                 )
-                state.add_note(f"Ran {action.tool}")
+                state.add_note(f"Ran {tool_name}")
             except TypeError as e:
-                state.add_note(f"Tool argument mismatch for {action.tool}: {e}")
+                state.add_note(f"Tool argument mismatch for {tool_name}: {e}")
                 state.add_tool_history(
-                    tool_name=action.tool,
-                    args=action.args,
+                    tool_name=tool_name,
+                    args=tool_args,
                     error=f"argument_mismatch: {e}",
                 )
             except Exception as e:
-                state.add_note(f"Tool execution failed for {action.tool}: {e}")
+                state.add_note(f"Tool execution failed for {tool_name}: {e}")
                 state.add_tool_history(
-                    tool_name=action.tool,
-                    args=action.args,
+                    tool_name=tool_name,
+                    args=tool_args,
                     error=f"execution_failed: {e}",
                 )
             continue
 
         if isinstance(action, FinalAction):
-            if "report_md" not in state.artifacts:
+            has_report = "report_md" in state.artifacts
+            has_target_resume = "target_resume_txt" in state.artifacts
+
+            if not has_report and not has_target_resume:
                 state.add_note(
-                    "Model tried to finish before report existed. Rendering fallback report."
+                    "Model tried to finish before producing an output artifact."
                 )
-                try:
-                    result = TOOLS["render_report"](state)
-                    state.add_tool_history(
-                        tool_name="render_report",
-                        args={},
-                        result=result,
-                    )
-                except Exception as e:
-                    state.add_note(f"Fallback render_report failed: {e}")
+
+                # Best-effort fallback: if fit-analysis artifacts exist, render report.
+                if (
+                    "requirements_json" in state.artifacts
+                    or "fit_analysis_json" in state.artifacts
+                ):
+                    try:
+                        result = TOOLS["render_report"](state)
+                        state.add_tool_history(
+                            tool_name="render_report",
+                            args={},
+                            result=result,
+                        )
+                    except Exception as e:
+                        state.add_note(f"Fallback render_report failed: {e}")
+
             return state
 
-    state.add_note("Max iterations reached. Attempting final render.")
-    if "report_md" not in state.artifacts:
-        try:
-            result = TOOLS["render_report"](state)
-            state.add_tool_history(
-                tool_name="render_report",
-                args={},
-                result=result,
-            )
-        except Exception as e:
-            state.add_note(f"Final fallback render failed: {e}")
-            state.artifacts["report_md"] = (
-                "# Interview Prep Report\n\n"
-                "The agent did not complete successfully.\n"
-            )
+    state.add_note("Max iterations reached. Attempting final fallback.")
+
+    has_report = "report_md" in state.artifacts
+    has_target_resume = "target_resume_txt" in state.artifacts
+
+    if not has_report and not has_target_resume:
+        # Prefer rendering a report if enough structured analysis exists
+        if (
+            "requirements_json" in state.artifacts
+            or "fit_analysis_json" in state.artifacts
+        ):
+            try:
+                result = TOOLS["render_report"](state)
+                state.add_tool_history(
+                    tool_name="render_report",
+                    args={},
+                    result=result,
+                )
+                return state
+            except Exception as e:
+                state.add_note(f"Final fallback render failed: {e}")
+
+        # Last resort fallback artifact
+        state.artifacts["report_md"] = (
+            "# Interview Prep Report\n\n"
+            "The agent did not complete successfully.\n"
+        )
+
     return state

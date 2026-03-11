@@ -111,6 +111,43 @@ def _read_textish_file(path: Path) -> str:
     return raw
 
 
+def _keyword_overlap_score(a: str, b: str) -> int:
+    a_tokens = {t for t in _tokenize(a) if t not in _STOPWORDS}
+    b_tokens = {t for t in _tokenize(b) if t not in _STOPWORDS}
+    return len(a_tokens & b_tokens)
+
+
+def tool_retrieve_similar_resume_examples(
+    state: AgentState,
+    top_k: int = 2,
+) -> dict[str, Any]:
+    """
+    Rank corpus examples by target JD similarity.
+    """
+    if not state.corpus_examples:
+        return {"matches": []}
+
+    scored: list[tuple[int, CorpusExample]] = []
+    for example in state.corpus_examples:
+        score = _keyword_overlap_score(state.jd_text, example.jd_text)
+        scored.append((score, example))
+
+    scored.sort(key=lambda pair: (-pair[0], pair[1].slug))
+    matches = [
+        {
+            "slug": example.slug,
+            "score": score,
+            "jd_preview": example.jd_text[:300],
+            "resume_preview": example.resume_variant_text[:300],
+        }
+        for score, example in scored[:top_k]
+        if score > 0
+    ]
+
+    state.artifacts["retrieved_examples_json"] = {"matches": matches}
+    return {"matches": matches}
+
+
 def tool_extract_jd_requirements(state: AgentState, top_k: int = 15) -> ToolResult:
     """
     Extract rough requirement keywords and phrases from the JD only.

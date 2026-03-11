@@ -303,30 +303,53 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 10) -> AgentState:
 
     state.add_note("Max iterations reached. Attempting final fallback.")
 
+    desired_output = state.artifacts.get("desired_output", "report")
     has_report = "report_md" in state.artifacts
     has_target_resume = "target_resume_txt" in state.artifacts
 
     if not has_report and not has_target_resume:
-        # Prefer rendering a report if enough structured analysis exists
-        if (
-            "requirements_json" in state.artifacts
-            or "fit_analysis_json" in state.artifacts
-        ):
+        if desired_output == "target_resume":
             try:
-                result = TOOLS["render_report"](state)
+                from src.tools import tool_generate_target_resume
+                result = tool_generate_target_resume(
+                    state=state,
+                    llm=llm,
+                    top_k=2,
+                )
                 state.add_tool_history(
-                    tool_name="render_report",
-                    args={},
+                    tool_name="generate_target_resume",
+                    args={"top_k": 2},
                     result=result,
                 )
                 return state
             except Exception as e:
-                state.add_note(f"Final fallback render failed: {e}")
+                state.add_note(f"Final fallback generate_target_resume failed: {e}")
+
+        if desired_output == "report":
+            if (
+                "requirements_json" in state.artifacts
+                or "fit_analysis_json" in state.artifacts
+            ):
+                try:
+                    result = TOOLS["render_report"](state)
+                    state.add_tool_history(
+                        tool_name="render_report",
+                        args={},
+                        result=result,
+                    )
+                    return state
+                except Exception as e:
+                    state.add_note(f"Final fallback render failed: {e}")
 
         # Last resort fallback artifact
-        state.artifacts["report_md"] = (
-            "# Interview Prep Report\n\n"
-            "The agent did not complete successfully.\n"
-        )
+        if desired_output == "target_resume":
+            state.artifacts["target_resume_txt"] = (
+                "Targeted resume generation did not complete successfully.\n"
+            )
+        else:
+            state.artifacts["report_md"] = (
+                "# Interview Prep Report\n\n"
+                "The agent did not complete successfully.\n"
+            )
 
     return state

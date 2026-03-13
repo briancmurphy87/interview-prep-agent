@@ -8,8 +8,7 @@ from dotenv import load_dotenv
 from src.agent_loop import run_agent
 from src.agent_state import AgentState
 from src.llm import LLM
-from src.tools import tool_score_resume_fit, tool_render_report
-
+from src.tools import tool_score_resume_fit, tool_render_report, tool_evaluate_target_resume
 
 load_dotenv()
 
@@ -60,6 +59,9 @@ def main() -> None:
             requirements=requirements,
             evidence_per_requirement=3,
         )
+
+    if "resume_evaluation_json" not in final_state.artifacts:
+        tool_evaluate_target_resume(state=final_state, llm=llm)
 
     if "report_md" not in final_state.artifacts:
         tool_render_report(final_state)

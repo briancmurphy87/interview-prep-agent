@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from src.agent_loop import run_agent
 from src.agent_state import AgentState
 from src.llm import LLM
+from src.tools import tool_score_resume_fit, tool_render_report
 
 
 load_dotenv()
@@ -26,14 +27,11 @@ def write_text_file(path: str, content: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--corpus",
-        default=None,
-        help="Path to resume corpus directory",
-    )
-    parser.add_argument("--jd", required=True, help="Path to job description text file")
-    parser.add_argument("--resume", required=True, help="Path to resume text file")
-    parser.add_argument("--out", default="report.md", help="Output markdown path")
+    parser.add_argument("--jd", required=True, help="Path to target job description text file")
+    parser.add_argument("--resume", required=True, help="Path to raw/base resume text file")
+    parser.add_argument("--corpus", required=True, help="Path to resume corpus directory")
+    parser.add_argument("--out-resume", required=True, help="Output path for targeted resume")
+    parser.add_argument("--out-report", required=True, help="Output path for companion report")
     parser.add_argument("--model", default="gpt-4.1-mini", help="LLM model name")
     args = parser.parse_args()
 
@@ -43,23 +41,34 @@ def main() -> None:
         jd_text=read_text_file(args.jd),
         resume_text=read_text_file(args.resume),
     )
-    if args.corpus:
-        initial_state.artifacts["corpus_dir"] = args.corpus
-        initial_state.artifacts["desired_output"] = "target_resume"
-    else:
-        initial_state.artifacts["desired_output"] = "report"
+    initial_state.artifacts["corpus_dir"] = args.corpus
 
     final_state = run_agent(
         llm=llm,
         state=initial_state,
     )
 
-    output_text = final_state.artifacts.get("target_resume_txt")
-    if output_text is None:
-        output_text = final_state.artifacts.get("report_md", "")
-    write_text_file(args.out, output_text)
+    target_resume = final_state.artifacts.get("target_resume_txt", "")
+    write_text_file(args.out_resume, target_resume)
 
-    print(f"Wrote {args.out} ({len(output_text.encode('utf-8'))} bytes)")
+    requirements_payload = final_state.artifacts.get("requirements_json", {})
+    requirements = requirements_payload.get("requirements", [])
+
+    if "fit_analysis_json" not in final_state.artifacts and requirements:
+        tool_score_resume_fit(
+            final_state,
+            requirements=requirements,
+            evidence_per_requirement=3,
+        )
+
+    if "report_md" not in final_state.artifacts:
+        tool_render_report(final_state)
+
+    report_md = final_state.artifacts.get("report_md", "")
+    write_text_file(args.out_report, report_md)
+
+    print(f"Wrote {args.out_resume} ({len(target_resume.encode('utf-8'))} bytes)")
+    print(f"Wrote {args.out_report} ({len(report_md.encode('utf-8'))} bytes)")
     print(f"Artifacts: {sorted(final_state.artifacts.keys())}")
     print(f"Tool calls: {len(final_state.tool_history)}")
 

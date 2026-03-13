@@ -39,8 +39,8 @@ SYSTEM = """You are an Interview Prep Agent.
 You support two workflows:
 
 1) Analysis workflow:
-- analyze job description vs resume
-- produce a report
+- analyze a job description against a resume
+- produce an interview-prep report
 
 2) Resume synthesis workflow:
 - load prior resume/JD examples from a corpus
@@ -74,7 +74,7 @@ Rules:
   3. render_report
   4. final
 - Do not return final until the requested output artifact exists.
-- Return JSON only.
+- Return JSON only. No markdown fences. No extra prose.
 
 Tool call:
 {"tool":"TOOL_NAME","args":{...}}
@@ -87,6 +87,7 @@ Final:
 def _build_user_prompt(state: AgentState) -> str:
     notes = "\n".join(f"- {n}" for n in state.notes[-15:])
     tool_hist = json.dumps(state.tool_history[-8:], indent=2)
+
     artifacts_summary = json.dumps(
         {
             "artifact_keys": sorted(state.artifacts.keys()),
@@ -104,7 +105,7 @@ def _build_user_prompt(state: AgentState) -> str:
 JOB DESCRIPTION:
 {state.jd_text}
 
-RESUME:
+RAW RESUME:
 {state.resume_text}
 
 NOTES:
@@ -272,6 +273,7 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 10) -> AgentState:
                 )
                 try:
                     from src.tools import tool_generate_target_resume
+
                     result = tool_generate_target_resume(
                         state=state,
                         llm=llm,
@@ -311,6 +313,7 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 10) -> AgentState:
         if desired_output == "target_resume":
             try:
                 from src.tools import tool_generate_target_resume
+
                 result = tool_generate_target_resume(
                     state=state,
                     llm=llm,

@@ -201,8 +201,8 @@ python src/agent.py \
   --jd job_specs/netflix_swe5.txt \
   --resume resume_corpus/raw_resume.txt \
   --corpus resume_corpus \
-  --out job_specs/netflix_swe5.targeted_resume.txt \
-  --report-out job_specs/netflix_swe5.report.md
+  --out-resume job_specs/netflix_swe5.targeted_resume.txt \
+  --out-report job_specs/netflix_swe5.report.md
 ```
 
 Outputs:

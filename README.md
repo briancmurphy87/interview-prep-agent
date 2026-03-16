@@ -50,11 +50,21 @@ job_specs/netflix_swe5.report.md
 ## output 1 - targeted resume
 
 will output the file here: 
-![job_specs/netflix_swe5.targeted_resume.txt](job_specs/netflix_swe5.targeted_resume.txt)
 
+![netflix_swe5.targeted_resume.txt](job_specs/netflix_swe5.targeted_resume.txt)
 
-snapshot: 
-![img.png](resources/img.png)
+screenshot: 
+
+![img.png](resources/example_output.targeted_resume.png)
+
+## output 2 - role fit and resume evaluation report
+will output the file here: 
+
+![netflix_swe5.report.md](job_specs/netflix_swe5.report.md)
+
+screenshot: 
+
+![img.png](resources/example_output.evaluation_report.png)
 
 # Example Workflow
 

@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import re
+import json
 from pathlib import Path
 from typing import Any, Callable
 
@@ -295,6 +296,8 @@ def tool_render_report(state: AgentState) -> ToolResult:
     requirements_payload = state.artifacts.get("requirements_json", {})
     fit_payload = state.artifacts.get("fit_analysis_json", {})
 
+    evaluation_payload = state.artifacts.get("resume_evaluation_json", {})
+
     requirements = requirements_payload.get("requirements", [])
     score = fit_payload.get("score", 0)
     matched = fit_payload.get("matched", [])
@@ -349,6 +352,55 @@ def tool_render_report(state: AgentState) -> ToolResult:
     lines.append("- Highlight ML/AI-adjacent experience where relevant, especially experimentation and applied modeling.")
     lines.append("")
 
+    lines.append("## LLM Resume Evaluation")
+    lines.append("")
+
+    if evaluation_payload:
+        overall_score = evaluation_payload.get("overall_score", "N/A")
+        lines.append(f"- Overall score: **{overall_score}/100**")
+        lines.append("")
+
+        for key, label in [
+            ("jd_alignment", "JD Alignment"),
+            ("keyword_coverage", "Keyword Coverage"),
+            ("clarity", "Clarity"),
+            ("exaggeration_risk", "Exaggeration Risk"),
+            ("ats_compatibility", "ATS Compatibility"),
+        ]:
+            section = evaluation_payload.get(key, {})
+            score = section.get("score", "N/A")
+            reason = section.get("reason", "")
+            lines.append(f"### {label}")
+            lines.append("")
+            lines.append(f"- Score: **{score}/100**")
+            if reason:
+                lines.append(f"- Reason: {reason}")
+            lines.append("")
+
+        red_flags = evaluation_payload.get("red_flags", [])
+        lines.append("### Red Flags")
+        lines.append("")
+        if red_flags:
+            for item in red_flags:
+                lines.append(f"- {item}")
+        else:
+            lines.append("- None identified.")
+        lines.append("")
+
+        improvements = evaluation_payload.get("suggested_improvements", [])
+        lines.append("### Suggested Improvements")
+        lines.append("")
+        if improvements:
+            for item in improvements:
+                lines.append(f"- {item}")
+        else:
+            lines.append("- No additional improvements suggested.")
+        lines.append("")
+    else:
+        lines.append("- No LLM evaluation available.")
+        lines.append("")
+
+    # finalize report
     report_md = "\n".join(lines).strip() + "\n"
     state.artifacts["report_md"] = report_md
 
@@ -470,6 +522,97 @@ Instructions:
         "bytes": len(generated.encode("utf-8")),
         "used_examples": [ex.slug for ex in selected_examples],
     }
+
+
+def tool_evaluate_target_resume(state: AgentState, llm: Any) -> dict[str, Any]:
+    """
+    LLM-as-judge evaluation of the generated resume.
+
+    Evaluates:
+    - JD alignment
+    - keyword coverage
+    - clarity
+    - exaggeration risk
+    - ATS compatibility
+    """
+    target_resume = state.artifacts.get("target_resume_txt", "").strip()
+    if not target_resume:
+        raise ValueError("target_resume_txt not found in artifacts")
+
+    prompt = f"""
+You are a strict resume evaluator.
+
+Evaluate the GENERATED RESUME against:
+1. TARGET JOB DESCRIPTION
+2. RAW BASE RESUME
+
+Your job is to assess whether the generated resume is:
+- well aligned to the job description
+- covering important keywords and concepts
+- clear and concise
+- plausible and defensible based on the raw resume
+- reasonably ATS-friendly
+
+TARGET JOB DESCRIPTION:
+{state.jd_text}
+
+RAW BASE RESUME:
+{state.resume_text}
+
+GENERATED RESUME:
+{target_resume}
+
+Return JSON only with this exact schema:
+{{
+  "overall_score": <int 0-100>,
+  "jd_alignment": {{
+    "score": <int 0-100>,
+    "reason": "<short explanation>"
+  }},
+  "keyword_coverage": {{
+    "score": <int 0-100>,
+    "reason": "<short explanation>"
+  }},
+  "clarity": {{
+    "score": <int 0-100>,
+    "reason": "<short explanation>"
+  }},
+  "exaggeration_risk": {{
+    "score": <int 0-100>,
+    "reason": "<short explanation>"
+  }},
+  "ats_compatibility": {{
+    "score": <int 0-100>,
+    "reason": "<short explanation>"
+  }},
+  "red_flags": [
+    "<possible unsupported or risky claim>",
+    "<possible unsupported or risky claim>"
+  ],
+  "suggested_improvements": [
+    "<specific improvement>",
+    "<specific improvement>",
+    "<specific improvement>"
+  ]
+}}
+Scoring note:
+- Higher is better for jd_alignment, keyword_coverage, clarity, ats_compatibility.
+- Higher is worse for exaggeration_risk? No. Instead define exaggeration_risk score such that higher = safer / lower risk.
+- Be skeptical. Do not assume unsupported claims are valid.
+""".strip()
+
+    raw = llm.complete(
+        system="You are a strict and skeptical resume evaluator. Output valid JSON only.",
+        user=prompt,
+    )
+
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Evaluator returned invalid JSON: {raw}") from e
+
+    state.artifacts["resume_evaluation_json"] = payload
+    return payload
 
 
 TOOLS: dict[str, ToolFn] = {

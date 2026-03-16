@@ -1,116 +1,258 @@
-# interview-prep-agent
 
-A small stateful LLM agent that turns a job description and a resume into a structured interview-prep report.
+# Interview Prep Agent
 
-## What it does
+A lightweight AI agent that generates **targeted resumes for specific job descriptions** using prior resume examples and automatically produces a detailed **fit and quality evaluation report**.
+
+The system demonstrates a practical architecture used in real AI systems:
+
+- Retrieval-augmented generation
+- Tool-based agent loops
+- Deterministic evaluation pipelines
+- LLM-as-judge artifact evaluation
+
+---
+
+# Overview
 
 Given:
 
-- a plain-text job description
-- a plain-text resume
+- a **target job description**
+- a **raw base resume**
+- a **corpus of previously tailored resumes**
 
-the agent produces a markdown report with:
+the agent:
 
-- estimated fit score
-- extracted job requirements
-- resume evidence matched to those requirements
-- weak areas / gaps
-- suggested talking points
+1. Extracts the most important job requirements
+2. Retrieves similar examples from the resume corpus
+3. Generates a **targeted resume**
+4. Scores how well the resume fits the job
+5. Uses an **LLM-based evaluator** to critique the resume
+6. Produces a detailed **review report**
 
-## Why this project exists
+---
 
-This project is intentionally small, but it demonstrates a real agent pattern rather than a one-shot prompt.
+# Example Output
 
-It shows:
+## input
+```shell    
+--jd
+job_specs/netflix_swe5.txt
+--resume
+resume_corpus/raw_resume.txt
+--corpus
+resume_corpus
+--out-resume
+job_specs/netflix_swe5.targeted_resume.txt
+--out-report
+job_specs/netflix_swe5.report.md
+```
 
-- mutable application state
-- LLM-driven action selection
-- deterministic tool execution
-- structured intermediate artifacts
-- deterministic final rendering
-- testability through fake / mocked model behavior
+## output 1 - targeted resume
 
-## Architecture
+will output the file here: 
+![job_specs/netflix_swe5.targeted_resume.txt](job_specs/netflix_swe5.targeted_resume.txt)
 
-The system is split into five layers:
 
-### 1. `src/agent.py`
-Application entry point.
+snapshot: 
+![img.png](resources/img.png)
 
-Responsibilities:
+# Example Workflow
 
-- parse CLI args
-- load input files
-- initialize the LLM
-- initialize the agent state
-- run the agent loop
-- write the final markdown report
+```
+job description
+       +
+raw resume
+       +
+resume corpus
+       ↓
+agent retrieves similar resume examples
+       ↓
+generate targeted resume
+       ↓
+fit analysis
+       ↓
+LLM resume evaluation
+       ↓
+final report
+```
 
-### 2. `src/agent_state.py`
-Shared mutable state.
+Outputs:
 
-This is the agent's real memory between model calls. It stores:
+```
+targeted_resume.txt
+resume_review_report.md
+```
 
-- `jd_text`
-- `resume_text`
-- `notes`
-- `artifacts`
-- `tool_history`
+---
 
-Important design point:
-the LLM does not directly mutate state. It proposes actions. Python executes them and updates state.
+# Project Structure
 
-### 3. `src/llm.py`
-Thin model adapter.
+```
+src/
+  agent.py          CLI entry point
+  agent_loop.py     agent orchestration loop
+  agent_state.py    shared state object
+  llm.py            LLM wrapper
+  tools.py          agent + evaluation tools
 
-Responsibilities:
+job_specs/
+  netflix_swe5.txt
+  ...
 
-- validate API configuration
-- submit prompts to the provider
-- return raw model output
-- surface quota / timeout / connection failures with clearer errors
+resume_corpus/
+  raw_resume.txt
+  google_cloud_ai_ml/
+  databricks_data_eng/
+  ...
+```
 
-This keeps provider-specific code isolated from the rest of the agent.
+---
 
-### 4. `src/tools.py`
-Deterministic capability layer.
+# Key Concepts Demonstrated
 
-Current tools:
+## Agent + Tool Architecture
 
+The agent does not directly generate everything.
+
+Instead it decides which tools to call:
+
+- `load_resume_corpus`
 - `extract_jd_requirements`
-- `find_resume_evidence`
-- `score_resume_fit`
-- `render_report`
-- `dump_state_summary`
+- `retrieve_similar_resume_examples`
+- `generate_target_resume`
 
-These tools do the concrete work. The LLM decides which tool to call next.
+This keeps reasoning separated from implementation.
 
-### 5. `src/agent_loop.py`
-Orchestration layer.
+---
 
-Responsibilities:
+## Retrieval-Augmented Resume Generation
 
-- build the current prompt from state
-- ask the LLM for the next action
-- validate that action
-- execute tools
-- update state
-- stop when the report is finished
+Instead of generating a resume from scratch, the agent retrieves relevant examples from a **resume corpus**.
 
-This is the core agent loop:
-think → act → observe → repeat
+This dramatically improves the quality of the generated resume.
 
-## Execution flow
+---
 
-1. Load `jd.txt` and `resume.txt`
-2. Build an `AgentState`
-3. Ask the model for the next action
-4. Execute a tool if requested
-5. Store results in `artifacts` and `tool_history`
-6. Repeat until the report is rendered
-7. Write `report.md`
+## Deterministic Evaluation Pipeline
 
-## Example usage
+After the resume is generated, Python code performs:
 
-```bash
-python src/agent.py --jd jd.txt --resume resume.txt --out report.md
+- requirement matching
+- evidence extraction
+- fit scoring
+
+This ensures evaluation remains reproducible and explainable.
+
+---
+
+## LLM-as-Judge Evaluation
+
+A second LLM pass evaluates the generated resume across multiple dimensions:
+
+- JD alignment
+- keyword coverage
+- clarity
+- exaggeration risk
+- ATS compatibility
+
+This produces structured critique and suggested improvements.
+
+---
+
+# Installation
+
+Create a virtual environment:
+
+```
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+Set your OpenAI API key:
+
+```
+export OPENAI_API_KEY="your_api_key_here"
+```
+
+---
+
+# Usage
+
+Example:
+
+```
+python src/agent.py \
+  --jd job_specs/netflix_swe5.txt \
+  --resume resume_corpus/raw_resume.txt \
+  --corpus resume_corpus \
+  --out job_specs/netflix_swe5.targeted_resume.txt \
+  --report-out job_specs/netflix_swe5.report.md
+```
+
+Outputs:
+
+```
+job_specs/netflix_swe5.targeted_resume.txt
+job_specs/netflix_swe5.report.md
+```
+
+---
+
+# Example Output Artifacts
+
+### Targeted Resume
+
+A rewritten resume tailored for the specific job description.
+
+### Review Report
+
+Includes:
+
+- extracted job requirements
+- resume evidence snippets
+- fit analysis
+- missing requirements
+- LLM quality evaluation
+- improvement suggestions
+
+---
+
+# Why This Project Exists
+
+Many AI demos stop at generation.
+
+Real systems require:
+
+- retrieval
+- structured reasoning
+- evaluation pipelines
+- automated critique
+
+This project demonstrates how those pieces fit together in a practical workflow.
+
+---
+
+# Possible Extensions
+
+Future improvements could include:
+
+- automatic resume revision loops
+- vector search for corpus retrieval
+- ATS keyword optimization
+- resume diff visualization
+- recruiter-style scoring rubrics
+- automatic cover letter generation
+
+---
+
+# Disclaimer
+
+Job descriptions included in this repository are publicly available postings used solely for demonstration purposes.
+
+Company names may be anonymized in some cases.

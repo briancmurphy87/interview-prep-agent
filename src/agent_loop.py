@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass
 from typing import Any, Literal
 
@@ -161,6 +162,8 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
             tool_args = action.args
 
             if tool_name == "generate_target_resume":
+                _t0 = time.monotonic()
+                _input_chars = len(json.dumps(tool_args, default=str))
                 try:
                     from src.tools import tool_generate_target_resume
 
@@ -173,6 +176,9 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                         tool_name=tool_name,
                         args=tool_args,
                         result=result,
+                        duration_ms=round((time.monotonic() - _t0) * 1000),
+                        input_chars=_input_chars,
+                        output_chars=len(json.dumps(result, default=str)),
                     )
                     state.add_note(f"Ran {tool_name}")
                 except TypeError as e:
@@ -181,6 +187,8 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                         tool_name=tool_name,
                         args=tool_args,
                         error=f"argument_mismatch: {e}",
+                        duration_ms=round((time.monotonic() - _t0) * 1000),
+                        input_chars=_input_chars,
                     )
                 except Exception as e:
                     state.add_note(f"Tool execution failed for {tool_name}: {e}")
@@ -188,6 +196,8 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                         tool_name=tool_name,
                         args=tool_args,
                         error=f"execution_failed: {e}",
+                        duration_ms=round((time.monotonic() - _t0) * 1000),
+                        input_chars=_input_chars,
                     )
                 continue
 
@@ -200,6 +210,8 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                 )
                 continue
 
+            _t0 = time.monotonic()
+            _input_chars = len(json.dumps(tool_args, default=str))
             try:
                 if tool_name == "load_resume_corpus" and "corpus_dir" not in tool_args:
                     corpus_dir = state.artifacts.get("corpus_dir")
@@ -214,6 +226,9 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                     tool_name=tool_name,
                     args=tool_args,
                     result=result,
+                    duration_ms=round((time.monotonic() - _t0) * 1000),
+                    input_chars=_input_chars,
+                    output_chars=len(json.dumps(result, default=str)),
                 )
                 state.add_note(f"Ran {tool_name}")
             except TypeError as e:
@@ -222,6 +237,8 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                     tool_name=tool_name,
                     args=tool_args,
                     error=f"argument_mismatch: {e}",
+                    duration_ms=round((time.monotonic() - _t0) * 1000),
+                    input_chars=_input_chars,
                 )
             except Exception as e:
                 state.add_note(f"Tool execution failed for {tool_name}: {e}")
@@ -229,6 +246,8 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                     tool_name=tool_name,
                     args=tool_args,
                     error=f"execution_failed: {e}",
+                    duration_ms=round((time.monotonic() - _t0) * 1000),
+                    input_chars=_input_chars,
                 )
             continue
 
@@ -237,6 +256,7 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                 state.add_note(
                     "Model tried to finish before producing target_resume_txt."
                 )
+                _t0 = time.monotonic()
                 try:
                     from src.tools import tool_generate_target_resume
 
@@ -249,15 +269,26 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                         tool_name="generate_target_resume",
                         args={"top_k": 2},
                         result=result,
+                        duration_ms=round((time.monotonic() - _t0) * 1000),
+                        input_chars=len(json.dumps({"top_k": 2})),
+                        output_chars=len(json.dumps(result, default=str)),
                     )
                 except Exception as e:
                     state.add_note(f"Fallback generate_target_resume failed: {e}")
+                    state.add_tool_history(
+                        tool_name="generate_target_resume",
+                        args={"top_k": 2},
+                        error=f"execution_failed: {e}",
+                        duration_ms=round((time.monotonic() - _t0) * 1000),
+                        input_chars=len(json.dumps({"top_k": 2})),
+                    )
 
             return state
 
     state.add_note("Max iterations reached. Attempting final fallback.")
 
     if "target_resume_txt" not in state.artifacts:
+        _t0 = time.monotonic()
         try:
             from src.tools import tool_generate_target_resume
 
@@ -270,10 +301,20 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
                 tool_name="generate_target_resume",
                 args={"top_k": 2},
                 result=result,
+                duration_ms=round((time.monotonic() - _t0) * 1000),
+                input_chars=len(json.dumps({"top_k": 2})),
+                output_chars=len(json.dumps(result, default=str)),
             )
             return state
         except Exception as e:
             state.add_note(f"Final fallback generate_target_resume failed: {e}")
+            state.add_tool_history(
+                tool_name="generate_target_resume",
+                args={"top_k": 2},
+                error=f"execution_failed: {e}",
+                duration_ms=round((time.monotonic() - _t0) * 1000),
+                input_chars=len(json.dumps({"top_k": 2})),
+            )
 
         state.artifacts["target_resume_txt"] = (
             "Targeted resume generation did not complete successfully.\n"

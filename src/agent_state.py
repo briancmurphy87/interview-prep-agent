@@ -47,6 +47,9 @@ class AgentState:
         args: dict[str, Any],
         result: dict[str, Any] | None = None,
         error: str | None = None,
+        duration_ms: int | None = None,
+        input_chars: int | None = None,
+        output_chars: int | None = None,
     ) -> None:
         entry: ToolHistoryEntry = {
             "tool": tool_name,
@@ -56,4 +59,10 @@ class AgentState:
             entry["result"] = result
         if error is not None:
             entry["error"] = error
+        if duration_ms is not None:
+            entry["duration_ms"] = duration_ms
+        if input_chars is not None:
+            entry["input_chars"] = input_chars
+        if output_chars is not None:
+            entry["output_chars"] = output_chars
         self.tool_history.append(entry)

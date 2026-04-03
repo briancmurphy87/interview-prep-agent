@@ -49,6 +49,7 @@ from dotenv import load_dotenv
 from src.agent_loop import run_agent
 from src.agent_state import AgentState
 from src.llm import LLM
+from src.observability import build_run_artifact
 from src.tools import (
     tool_evaluate_target_resume,
     tool_render_report,
@@ -84,7 +85,7 @@ def _discover_cases(eval_dir: Path) -> list[Path]:
 # ---------------------------------------------------------------------------
 
 
-def _run_case(case_dir: Path, corpus_dir: str, llm: LLM) -> dict[str, Any]:
+def _run_case(case_dir: Path, corpus_dir: str, llm: LLM, run_id: str) -> dict[str, Any]:
     """
     Execute the full pipeline for a single eval case and return a result dict.
 
@@ -154,6 +155,8 @@ def _run_case(case_dir: Path, corpus_dir: str, llm: LLM) -> dict[str, Any]:
     # Optional: validate extracted requirements against expected_requirements.json
     requirement_validation = _validate_requirements(case_dir, state)
 
+    run_artifact = build_run_artifact(run_id=run_id, llm=llm, state=state)
+
     return {
         "slug": slug,
         "status": status,
@@ -164,6 +167,7 @@ def _run_case(case_dir: Path, corpus_dir: str, llm: LLM) -> dict[str, Any]:
         "requirement_validation": requirement_validation,
         "error": error,
         "state": state,
+        "run_artifact": run_artifact,
     }
 
 
@@ -245,6 +249,10 @@ def _save_case_outputs(result: dict[str, Any], out_dir: Path) -> None:
     for key, filename in json_artifact_map.items():
         if key in state.artifacts:
             _write_json(filename, state.artifacts[key])
+
+    # Observability: full timing + cost breakdown for this run
+    if "run_artifact" in result:
+        _write_json("run_artifact.json", result["run_artifact"])
 
     # Always write run metadata so failed cases are still observable
     metadata = {
@@ -386,7 +394,8 @@ def main() -> None:
         slug = case_dir.name
         print(f"[{slug}] Running...")
 
-        result = _run_case(case_dir=case_dir, corpus_dir=args.corpus, llm=llm)
+        run_id = f"{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}_{slug}"
+        result = _run_case(case_dir=case_dir, corpus_dir=args.corpus, llm=llm, run_id=run_id)
         _save_case_outputs(result, out_dir)
 
         if result["status"] == "success":

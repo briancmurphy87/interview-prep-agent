@@ -103,8 +103,9 @@ src/
   agent.py          CLI entry point (single job run)
   agent_loop.py     agent orchestration loop
   agent_state.py    shared state object
-  llm.py            LLM wrapper
+  llm.py            LLM wrapper (instruments every API call)
   tools.py          agent + evaluation tools
+  observability.py  run artifact assembly (timing, tokens, cost)
   run_evals.py      batch evaluation harness
 
 resume_corpus/
@@ -270,6 +271,7 @@ report.md               full fit + evaluation report
 requirements.json       extracted JD requirements
 retrieved_examples.json corpus retrieval results
 evaluation.json         LLM evaluator scores and feedback
+run_artifact.json       observability trace (tool spans, LLM spans, cost)
 run_metadata.json       timing, tool counts, notes, validation result
 ```
 

@@ -52,7 +52,11 @@ def test_run_agent_happy_path() -> None:
     assert "requirements_json" in state.artifacts
     assert "fit_analysis_json" in state.artifacts
     assert "report_md" in state.artifacts
-    assert len(state.tool_history) == 3
+    # 3 successful tool calls + 1 failed fallback generate_target_resume
+    # (premature-final guard fires because the LLM sequence never called it)
+    assert len(state.tool_history) == 4
+    assert state.tool_history[3]["tool"] == "generate_target_resume"
+    assert "error" in state.tool_history[3]
     assert state.artifacts["report_md"].startswith("# Interview Prep Report")
 
 

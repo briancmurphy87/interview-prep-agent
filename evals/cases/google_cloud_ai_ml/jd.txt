@@ -1,0 +1,39 @@
+Google Cloud AI Engineer - Professional Services
+
+Minimum qualifications:
+- Bachelor's degree in Computer Science or equivalent practical experience.
+- 8 years of experience building machine learning solutions and working with technical customers.
+- Experience designing cloud enterprise solutions and supporting customer projects to completion.
+- Experience in one or more discipline areas: machine learning, recommendation systems, natural
+  language processing, computer vision, pattern recognition, agentic workflows, genAI, or
+  artificial intelligence.
+- Experience coding in one or more general purpose languages (e.g., Python, Java, Go, C or C++),
+  including data structures, algorithms, and software design.
+
+Preferred qualifications:
+- Experience working with recommendation engines, data pipelines, or distributed machine learning.
+- Experience with deep learning frameworks such as TensorFlow, PyTorch, or XGBoost.
+- Knowledge of data warehousing concepts, including technical architectures, infrastructure
+  components, ETL/ELT, and reporting/analytic tools and environments (e.g., Apache Beam, Hadoop,
+  Spark, Pig, Hive, MapReduce, Flume).
+- Understanding of auxiliary practical concerns in production machine learning systems.
+
+About the job:
+The Google Cloud Consulting Professional Services team guides customers through the moments that
+matter most in their cloud journey. As a Cloud AI Engineer, you will design and implement machine
+learning solutions for customer use cases, leveraging core Google products including TensorFlow,
+DataFlow, and Vertex AI. You will work with customers to identify opportunities to apply machine
+learning in their business, and travel to customer sites to deploy solutions and deliver workshops.
+You will also work closely with Product Management and Product Engineering to drive excellence in
+our products.
+
+Responsibilities:
+- Act as a trusted technical advisor to customers and solve machine learning issues.
+- Coach customers on the practical issues in machine learning systems: feature extraction,
+  data validation, monitoring, and management of features and models.
+- Work with customers, partners, and Google product teams to deliver tailored solutions into
+  production.
+- Create and deliver best practice recommendations, tutorials, blog articles, and sample code.
+- Travel up to 30% within the region for meetings, technical reviews, and onsite delivery.
+
+US base salary range: $177,000 - $263,000 + bonus + equity + benefits.

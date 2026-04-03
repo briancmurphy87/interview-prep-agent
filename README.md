@@ -9,6 +9,7 @@ The system demonstrates a practical architecture used in real AI systems:
 - Tool-based agent loops
 - Deterministic evaluation pipelines
 - LLM-as-judge artifact evaluation
+- Reproducible batch evaluation harness
 
 ---
 
@@ -99,21 +100,31 @@ resume_review_report.md
 
 ```
 src/
-  agent.py          CLI entry point
+  agent.py          CLI entry point (single job run)
   agent_loop.py     agent orchestration loop
   agent_state.py    shared state object
   llm.py            LLM wrapper
   tools.py          agent + evaluation tools
-
-job_specs/
-  netflix_swe5.txt
-  ...
+  run_evals.py      batch evaluation harness
 
 resume_corpus/
   raw_resume.txt
   google_cloud_ai_ml/
-  databricks_data_eng/
+  netflix_swe_n_tech/
   ...
+
+evals/
+  cases/
+    netflix_swe_n_tech/
+      jd.txt
+      raw_resume.txt
+      expected_requirements.json
+    google_cloud_ai_ml/
+      ...
+    databricks_ml_ai_finserv/
+      ...
+  outputs/            per-case artifacts written here at runtime
+  summaries/          aggregate summary JSONs written here at runtime
 ```
 
 ---
@@ -169,6 +180,33 @@ This produces structured critique and suggested improvements.
 
 ---
 
+## Batch Evaluation Harness
+
+`src/run_evals.py` runs the full pipeline across multiple eval cases and aggregates results into a single summary.
+
+Each eval case lives under `evals/cases/<slug>/` and contains:
+
+- `jd.txt` — the target job description
+- `raw_resume.txt` — the base resume input
+- `expected_requirements.json` — optional keyword expectations used for pass/fail validation
+
+The summary reports:
+
+| Metric | Description |
+|---|---|
+| `average_overall_score` | Mean LLM evaluator overall score across cases |
+| `average_jd_alignment` | Mean JD alignment score |
+| `average_keyword_coverage` | Mean keyword coverage score |
+| `average_exaggeration_safety` | Mean exaggeration safety score (higher = safer) |
+| `average_ats_compatibility` | Mean ATS compatibility score |
+| `average_fit_score` | Mean deterministic fit score |
+| `retrieval_hit_rate` | Fraction of cases where corpus retrieval returned ≥1 match |
+| `num_failed` | Cases that raised an uncaught exception |
+
+This turns the project from "I built an agent" into "I built and evaluated an AI workflow with reproducible cases."
+
+---
+
 # Installation
 
 Create a virtual environment:
@@ -194,10 +232,10 @@ export OPENAI_API_KEY="your_api_key_here"
 
 # Usage
 
-Example:
+## Single job run
 
 ```
-python src/agent.py \
+python -m src.agent \
   --jd job_specs/netflix_swe5.txt \
   --resume resume_corpus/raw_resume.txt \
   --corpus resume_corpus \
@@ -211,6 +249,31 @@ Outputs:
 job_specs/netflix_swe5.targeted_resume.txt
 job_specs/netflix_swe5.report.md
 ```
+
+## Batch evaluation
+
+Run all cases under `evals/cases/` and write outputs + a summary:
+
+```
+python -m src.run_evals \
+  --eval-dir evals/cases \
+  --out-dir  evals/outputs \
+  --corpus   resume_corpus \
+  --model    gpt-4.1-mini
+```
+
+Per-case outputs are written to `evals/outputs/<case_slug>/`:
+
+```
+target_resume.txt       tailored resume for that case
+report.md               full fit + evaluation report
+requirements.json       extracted JD requirements
+retrieved_examples.json corpus retrieval results
+evaluation.json         LLM evaluator scores and feedback
+run_metadata.json       timing, tool counts, notes, validation result
+```
+
+A summary JSON is written to `evals/summaries/summary_<timestamp>.json` with aggregate metrics across all cases.
 
 ---
 
@@ -252,12 +315,13 @@ This project demonstrates how those pieces fit together in a practical workflow.
 
 Future improvements could include:
 
-- automatic resume revision loops
-- vector search for corpus retrieval
+- automatic resume revision loops based on evaluator feedback
+- vector search for corpus retrieval (replacing keyword overlap)
 - ATS keyword optimization
 - resume diff visualization
 - recruiter-style scoring rubrics
 - automatic cover letter generation
+- trend analysis across eval summary runs to track prompt improvements over time
 
 ---
 

@@ -1,0 +1,16 @@
+{
+  "expected_keywords": [
+    "python",
+    "java",
+    "apis",
+    "backend services",
+    "enterprise applications",
+    "cloud platforms",
+    "genai applications",
+    "aws",
+    "gcp",
+    "workflow automation",
+    "internal applications"
+  ],
+  "min_keyword_matches": 5
+}

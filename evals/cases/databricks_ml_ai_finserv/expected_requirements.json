@@ -1,0 +1,14 @@
+{
+  "expected_keywords": [
+    "machine learning",
+    "llms",
+    "genai applications",
+    "cloud platforms",
+    "aws",
+    "gcp",
+    "data",
+    "pipelines",
+    "ai"
+  ],
+  "min_keyword_matches": 3
+}

@@ -1,0 +1,12 @@
+{
+  "expected_keywords": [
+    "machine learning",
+    "cloud platforms",
+    "python",
+    "gcp",
+    "data",
+    "pipelines",
+    "ai"
+  ],
+  "min_keyword_matches": 3
+}

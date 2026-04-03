@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dec2c31b-95fe-4d21-849f-da88b8df83b4" name="Changes" comment="start to update readme for new functionality">
+      <change afterPath="$PROJECT_DIR$/resume_corpus/netflix_distributed_systems_engineer_L5_data_platform/jd.txt" afterDir="false" />
+    </list>
+    <list id="4f95b601-ca31-439e-9969-39b72418acf1" name="try ignore" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/interview-prep-agent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;briancmurphy87&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:briancmurphy87/interview-prep-agent.git&quot;,
+    &quot;accountId&quot;: &quot;2e075c09-a82c-470b-8fb5-12523fdcd23f&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;briancmurphy87&quot;,
+    &quot;repository&quot;: &quot;interview-prep-agent&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3ADrqBPJ3LgLSJ7zfrVxp6Kmiyh" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.agent.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;brian/ftr-fit-eval-agent&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/brianmurphy/PycharmProjects/interview-prep-agent/job_specs&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/job_specs" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resume_corpus/netflix_distributed_systems_engineer_L5_data_platform" />
+      <recent name="$PROJECT_DIR$/resources" />
+      <recent name="$PROJECT_DIR$/resume_corpus" />
+      <recent name="$PROJECT_DIR$/resume_corpus/imc_swe_cpp" />
+      <recent name="$PROJECT_DIR$/resume_corpus/netflix_swe5" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="agent" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="interview-prep-agent" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/agent.py" />
+      <option name="PARAMETERS" value="--jd job_specs/netflix_swe5.txt --resume resume_corpus/raw_resume.txt --corpus resume_corpus --out-resume job_specs/netflix_swe5.targeted_resume.txt --out-report job_specs/netflix_swe5.report.md" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.agent" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dec2c31b-95fe-4d21-849f-da88b8df83b4" name="Changes" comment="" />
+      <changelist id="4f95b601-ca31-439e-9969-39b72418acf1" name="try ignore" comment="" />
+      <created>1772138170738</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1772138170738</updated>
+    </task>
+    <task id="LOCAL-00001" summary="initial commit">
+      <option name="closed" value="true" />
+      <created>1772140590732</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1772140590732</updated>
+    </task>
+    <task id="LOCAL-00002" summary="refactor to separate files">
+      <option name="closed" value="true" />
+      <created>1773253384064</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1773253384064</updated>
+    </task>
+    <task id="LOCAL-00003" summary="agent_state.py - tighter v2 with these upgrades:&#10;- typed action objects instead of ad hoc dicts&#10;- stronger, more domain-specific tools&#10;- safer JSON parsing and validation&#10;- clearer intermediate artifacts&#10;- friendlier OpenAI error handling&#10;- a deterministic markdown renderer tool">
+      <option name="closed" value="true" />
+      <created>1773254209391</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1773254209391</updated>
+    </task>
+    <task id="LOCAL-00004" summary="llm.py - tighter v2 with these upgrades:&#10;- typed action objects instead of ad hoc dicts&#10;- stronger, more domain-specific tools&#10;- safer JSON parsing and validation&#10;- clearer intermediate artifacts&#10;- friendlier OpenAI error handling&#10;- a deterministic markdown renderer tool">
+      <option name="closed" value="true" />
+      <created>1773254282855</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1773254282855</updated>
+    </task>
+    <task id="LOCAL-00005" summary="tools.py - tighter v2 with these upgrades:&#10;- typed action objects instead of ad hoc dicts&#10;- stronger, more domain-specific tools&#10;- safer JSON parsing and validation&#10;- clearer intermediate artifacts&#10;- friendlier OpenAI error handling&#10;- a deterministic markdown renderer tool">
+      <option name="closed" value="true" />
+      <created>1773254309574</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1773254309574</updated>
+    </task>
+    <task id="LOCAL-00006" summary="tools.py - tighter v2 with these upgrades:&#10;- typed action objects instead of ad hoc dicts&#10;- stronger, more domain-specific tools&#10;- safer JSON parsing and validation&#10;- clearer intermediate artifacts&#10;- friendlier OpenAI error handling&#10;- a deterministic markdown renderer tool">
+      <option name="closed" value="true" />
+      <created>1773254364091</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1773254364091</updated>
+    </task>
+    <task id="LOCAL-00007" summary="tools.py - tighter v2 with these upgrades:&#10;- typed action objects instead of ad hoc dicts&#10;- stronger, more domain-specific tools&#10;- safer JSON parsing and validation&#10;- clearer intermediate artifacts&#10;- friendlier OpenAI error handling&#10;- a deterministic markdown renderer tool">
+      <option name="closed" value="true" />
+      <created>1773254376998</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1773254376998</updated>
+    </task>
+    <task id="LOCAL-00008" summary="edit">
+      <option name="closed" value="true" />
+      <created>1773255929796</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1773255929796</updated>
+    </task>
+    <task id="LOCAL-00009" summary="start to add unit tests">
+      <option name="closed" value="true" />
+      <created>1773256203154</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1773256203154</updated>
+    </task>
+    <task id="LOCAL-00010" summary="full README.md">
+      <option name="closed" value="true" />
+      <created>1773256212215</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1773256212215</updated>
+    </task>
+    <task id="LOCAL-00011" summary="add separate folder for sample job specs">
+      <option name="closed" value="true" />
+      <created>1773256699435</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1773256699435</updated>
+    </task>
+    <task id="LOCAL-00012" summary="adding test fixtures">
+      <option name="closed" value="true" />
+      <created>1773256726477</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1773256726477</updated>
+    </task>
+    <task id="LOCAL-00013" summary="current _REQUIREMENT_HINTS set does not include some Netflix-important terms like:&#10;- python&#10;- java&#10;- api&#10;- apis&#10;- genai&#10;- llm&#10;- workflow&#10;- integrations&#10;&#10;Right now the extractor may still find some of these if frequency and token length help, but it would be better to add them explicitly because they are central to the job spec. &#10;&#10;The posting explicitly asks for backend technologies, GenAI/LLMs, Python and/or Java, APIs, integrations, and cloud platforms.">
+      <option name="closed" value="true" />
+      <created>1773257055755</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1773257055755</updated>
+    </task>
+    <task id="LOCAL-00014" summary="revise test fixture for netflix swe5 role">
+      <option name="closed" value="true" />
+      <created>1773257151744</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1773257151744</updated>
+    </task>
+    <task id="LOCAL-00015" summary="revise test fixture for netflix swe5 role">
+      <option name="closed" value="true" />
+      <created>1773257225585</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1773257225585</updated>
+    </task>
+    <task id="LOCAL-00016" summary="upgrade that makes requirement extraction noticeably better for Netflix-style backend / internal-platform / GenAI-adjacent roles, while keeping the project simple and deterministic">
+      <option name="closed" value="true" />
+      <created>1773257300970</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1773257300970</updated>
+    </task>
+    <task id="LOCAL-00017" summary="update keyword list to be slightly more phrase-oriented">
+      <option name="closed" value="true" />
+      <created>1773257359162</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1773257359162</updated>
+    </task>
+    <task id="LOCAL-00018" summary="fix test case">
+      <option name="closed" value="true" />
+      <created>1773257900920</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1773257900920</updated>
+    </task>
+    <task id="LOCAL-00019" summary="adding &quot;resume_corpus&quot; folder containing: 1. job specs 2. drafted resumes 3. original, raw-data resume">
+      <option name="closed" value="true" />
+      <created>1773259408060</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259408060</updated>
+    </task>
+    <task id="LOCAL-00020" summary="agent_state.py - store corpus examples and the generated resume">
+      <option name="closed" value="true" />
+      <created>1773259535440</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259535440</updated>
+    </task>
+    <task id="LOCAL-00021" summary="agent_state.py - store corpus examples and the generated resume">
+      <option name="closed" value="true" />
+      <created>1773259540567</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259540567</updated>
+    </task>
+    <task id="LOCAL-00022" summary="tools.py - corpus loading and markdown normalization">
+      <option name="closed" value="true" />
+      <created>1773259662234</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259662234</updated>
+    </task>
+    <task id="LOCAL-00023" summary="tools.py - corpus loading fn">
+      <option name="closed" value="true" />
+      <created>1773259682853</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259682853</updated>
+    </task>
+    <task id="LOCAL-00024" summary="tools.py - Score and retrieve similar examples">
+      <option name="closed" value="true" />
+      <created>1773259738498</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259738498</updated>
+    </task>
+    <task id="LOCAL-00025" summary="tools.py - Add resume generation tool">
+      <option name="closed" value="true" />
+      <created>1773259767290</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259767290</updated>
+    </task>
+    <task id="LOCAL-00026" summary="tools.py - update registry">
+      <option name="closed" value="true" />
+      <created>1773259841645</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259841645</updated>
+    </task>
+    <task id="LOCAL-00027" summary="agent_loop.py - revise ToolName and SYS">
+      <option name="closed" value="true" />
+      <created>1773259891949</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1773259891949</updated>
+    </task>
+    <task id="LOCAL-00028" summary="agent_loop.py - special handling for &quot;generate_target_resume&quot;">
+      <option name="closed" value="true" />
+      <created>1773260393911</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1773260393911</updated>
+    </task>
+    <task id="LOCAL-00029" summary="agent.py - update cli for corpus">
+      <option name="closed" value="true" />
+      <created>1773260409665</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1773260409665</updated>
+    </task>
+    <task id="LOCAL-00030" summary="updated paths">
+      <option name="closed" value="true" />
+      <created>1773260417687</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1773260417687</updated>
+    </task>
+    <task id="LOCAL-00031" summary="sample output">
+      <option name="closed" value="true" />
+      <created>1773260514537</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1773260514537</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fix to arbitrate both flows">
+      <option name="closed" value="true" />
+      <created>1773260974619</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1773260974619</updated>
+    </task>
+    <task id="LOCAL-00033" summary="fix to arbitrate both flows">
+      <option name="closed" value="true" />
+      <created>1773261145713</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1773261145713</updated>
+    </task>
+    <task id="LOCAL-00034" summary="fix to arbitrate both flows">
+      <option name="closed" value="true" />
+      <created>1773261338979</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1773261338979</updated>
+    </task>
+    <task id="LOCAL-00035" summary="agent_loop.py - cleanups and fixes">
+      <option name="closed" value="true" />
+      <created>1773419773535</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1773419773535</updated>
+    </task>
+    <task id="LOCAL-00036" summary="collapse into single workflow for simplicity (i.e. the one that uses resume corpus)&#10;removes:&#10;- desired_output&#10;- report-vs-resume branching&#10;- report fallback logic from the loop&#10;&#10;agent now has exactly one job:&#10;- generate the targeted resume&#10;agent also directly invokes 'report rendering'">
+      <option name="closed" value="true" />
+      <created>1773420334511</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1773420334511</updated>
+    </task>
+    <task id="LOCAL-00037" summary="For every generated resume, add a second LLM call that scores it on:&#10;-JD alignment&#10;- keyword coverage&#10;- clarity&#10;- exaggeration risk&#10;- ATS compatibility&#10;And returns:&#10;- numeric scores&#10;- brief rationale&#10;- concrete revision suggestions">
+      <option name="closed" value="true" />
+      <created>1773427943586</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1773427943586</updated>
+    </task>
+    <task id="LOCAL-00038" summary="add outputs">
+      <option name="closed" value="true" />
+      <created>1773684116757</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1773684116757</updated>
+    </task>
+    <task id="LOCAL-00039" summary="start to update readme for new functionality">
+      <option name="closed" value="true" />
+      <created>1773684170322</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1773684170322</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add separate folder for sample job specs" />
+    <MESSAGE value="adding test fixtures" />
+    <MESSAGE value="current _REQUIREMENT_HINTS set does not include some Netflix-important terms like:&#10;- python&#10;- java&#10;- api&#10;- apis&#10;- genai&#10;- llm&#10;- workflow&#10;- integrations&#10;&#10;Right now the extractor may still find some of these if frequency and token length help, but it would be better to add them explicitly because they are central to the job spec. &#10;&#10;The posting explicitly asks for backend technologies, GenAI/LLMs, Python and/or Java, APIs, integrations, and cloud platforms." />
+    <MESSAGE value="revise test fixture for netflix swe5 role" />
+    <MESSAGE value="upgrade that makes requirement extraction noticeably better for Netflix-style backend / internal-platform / GenAI-adjacent roles, while keeping the project simple and deterministic" />
+    <MESSAGE value="update keyword list to be slightly more phrase-oriented" />
+    <MESSAGE value="fix test case" />
+    <MESSAGE value="adding &quot;resume_corpus&quot; folder containing: 1. job specs 2. drafted resumes 3. original, raw-data resume" />
+    <MESSAGE value="agent_state.py - store corpus examples and the generated resume" />
+    <MESSAGE value="tools.py - corpus loading and markdown normalization" />
+    <MESSAGE value="tools.py - corpus loading fn" />
+    <MESSAGE value="tools.py - Score and retrieve similar examples" />
+    <MESSAGE value="tools.py - Add resume generation tool" />
+    <MESSAGE value="tools.py - update registry" />
+    <MESSAGE value="agent_loop.py - revise ToolName and SYS" />
+    <MESSAGE value="agent_loop.py - special handling for &quot;generate_target_resume&quot;" />
+    <MESSAGE value="agent.py - update cli for corpus" />
+    <MESSAGE value="updated paths" />
+    <MESSAGE value="sample output" />
+    <MESSAGE value="fix to arbitrate both flows" />
+    <MESSAGE value="agent_loop.py - cleanups and fixes" />
+    <MESSAGE value="collapse into single workflow for simplicity (i.e. the one that uses resume corpus)&#10;removes:&#10;- desired_output&#10;- report-vs-resume branching&#10;- report fallback logic from the loop&#10;&#10;agent now has exactly one job:&#10;- generate the targeted resume&#10;agent also directly invokes 'report rendering'" />
+    <MESSAGE value="For every generated resume, add a second LLM call that scores it on:&#10;-JD alignment&#10;- keyword coverage&#10;- clarity&#10;- exaggeration risk&#10;- ATS compatibility&#10;And returns:&#10;- numeric scores&#10;- brief rationale&#10;- concrete revision suggestions" />
+    <MESSAGE value="add outputs" />
+    <MESSAGE value="start to update readme for new functionality" />
+    <option name="LAST_COMMIT_MESSAGE" value="start to update readme for new functionality" />
+  </component>
+</project>

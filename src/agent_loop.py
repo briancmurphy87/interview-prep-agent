@@ -138,6 +138,17 @@ def agent_step(llm: LLM, state: AgentState) -> ToolAction | FinalAction:
 
 
 def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
+    """
+    Run the resume tailoring agent loop until completion or max_iters.
+
+    Fallback chain (in order):
+    1. Normal exit: LLM emits {"final": "done"} after producing target_resume_txt.
+    2. Premature final: LLM emits {"final": "done"} before target_resume_txt exists —
+       tool_generate_target_resume is called directly (top_k=2), then the loop exits.
+    3. Max iterations reached: same forced generate call; if that also fails, a
+       placeholder error string is written to target_resume_txt so downstream code
+       never sees a missing artifact.
+    """
     for _ in range(max_iters):
         try:
             action = agent_step(llm, state)

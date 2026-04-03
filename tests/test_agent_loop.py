@@ -74,7 +74,10 @@ def test_run_agent_unknown_tool_records_error_and_recovers() -> None:
     assert "report_md" in state.artifacts
 
 
-def test_run_agent_invalid_json_falls_back_to_final_render() -> None:
+def test_run_agent_invalid_json_writes_error_placeholder() -> None:
+    # When every LLM call returns invalid JSON the loop breaks early, exhausts
+    # the max-iters fallback, and writes an error string to target_resume_txt.
+    # report_md is NOT produced by run_agent — that happens in main() post-loop.
     llm = FakeLLM(
         outputs=[
             'this is not valid json',
@@ -83,7 +86,58 @@ def test_run_agent_invalid_json_falls_back_to_final_render() -> None:
 
     state = run_agent(llm=llm, state=make_state(), max_iters=2)
 
-    assert "report_md" in state.artifacts
-    assert "did not complete successfully" in state.artifacts["report_md"].lower() or \
-           state.artifacts["report_md"].startswith("# Interview Prep Report")
+    assert "target_resume_txt" in state.artifacts
+    assert "did not complete successfully" in state.artifacts["target_resume_txt"].lower()
     assert any("Agent step failed" in note for note in state.notes)
+    assert "report_md" not in state.artifacts
+
+
+# ---------------------------------------------------------------------------
+# Fallback: premature {"final":"done"} before target_resume_txt exists
+# ---------------------------------------------------------------------------
+
+
+def test_run_agent_premature_final_triggers_generate_fallback() -> None:
+    # LLM says "done" immediately, before any resume was generated.
+    # The loop should call tool_generate_target_resume directly (which itself
+    # calls llm.complete for the actual resume text).
+    llm = FakeLLM(
+        outputs=[
+            '{"final":"done"}',              # premature final
+            "Generated resume text here.",   # consumed by tool_generate_target_resume
+        ]
+    )
+
+    state = run_agent(llm=llm, state=make_state(), max_iters=8)
+
+    assert "target_resume_txt" in state.artifacts
+    assert any(
+        "tried to finish" in note or "generate_target_resume" in note
+        for note in state.notes
+    )
+
+
+# ---------------------------------------------------------------------------
+# Tool argument mismatch is recorded and loop continues
+# ---------------------------------------------------------------------------
+
+
+def test_run_agent_tool_argument_mismatch_records_error_and_continues() -> None:
+    # score_resume_fit requires `requirements` arg; omitting it causes TypeError.
+    llm = FakeLLM(
+        outputs=[
+            '{"tool":"score_resume_fit","args":{}}',   # missing required arg
+            '{"tool":"extract_jd_requirements","args":{"top_k":3}}',
+            '{"tool":"render_report","args":{}}',
+            '{"final":"done"}',
+        ]
+    )
+
+    state = run_agent(llm=llm, state=make_state(), max_iters=8)
+
+    # First entry should record the argument mismatch
+    assert state.tool_history[0]["tool"] == "score_resume_fit"
+    assert "argument_mismatch" in state.tool_history[0]["error"]
+    # Loop recovered and continued to produce subsequent artifacts
+    assert "requirements_json" in state.artifacts
+    assert "report_md" in state.artifacts

@@ -258,9 +258,15 @@ def tool_find_resume_evidence(
 
 def tool_score_resume_fit(
     state: AgentState,
-    requirements: list[str],
+    requirements: list[str] | None = None,
     evidence_per_requirement: int = 3,
 ) -> ToolResult:
+    # If requirements not supplied, fall back to whatever was extracted earlier.
+    # This lets the agent call score_resume_fit() with no args after
+    # extract_jd_requirements has already populated requirements_json.
+    if requirements is None:
+        requirements = state.artifacts.get("requirements_json", {}).get("requirements", [])
+
     matched: list[dict[str, Any]] = []
     gaps: list[str] = []
 
@@ -467,9 +473,49 @@ def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any
     return payload
 
 
+def _build_evidence_grounding_block(state: AgentState) -> str:
+    """
+    Assemble a structured evidence section from fit_analysis_json artifacts.
+
+    When score_resume_fit has already run, this surfaces verified resume
+    snippets per requirement and lists uncovered gaps so the generation LLM
+    is explicitly conditioned on real evidence rather than free-associating.
+
+    Returns an empty string when fit_analysis_json is not yet available,
+    making it safe to call even before the fit step has run.
+    """
+    fit = state.artifacts.get("fit_analysis_json", {})
+    if not fit:
+        return ""
+
+    lines: list[str] = []
+
+    matched = fit.get("matched", [])
+    if matched:
+        lines.append("REQUIREMENT EVIDENCE (verified in candidate's resume — anchor bullet points to these):")
+        for item in matched:
+            lines.append(f"  Requirement: {item['requirement']}")
+            for snippet in item["evidence"][:2]:   # cap at 2 snippets to keep prompt tight
+                lines.append(f"    - {snippet}")
+        lines.append("")
+
+    gaps = fit.get("gaps", [])
+    if gaps:
+        lines.append("UNCOVERED REQUIREMENTS (no resume evidence found — do not invent coverage):")
+        for gap in gaps:
+            lines.append(f"  - {gap}")
+        lines.append("")
+
+    return "\n".join(lines) + "\n" if lines else ""
+
+
 def tool_generate_target_resume(state: AgentState, llm: Any, top_k: int = 2) -> dict[str, Any]:
     """
     Use target JD + raw resume + top corpus examples to generate a targeted resume draft.
+
+    If fit_analysis_json is already in state artifacts (i.e. score_resume_fit ran
+    before this tool), the generation prompt is enriched with verified evidence
+    snippets and explicit gap warnings — reducing hallucination risk.
     """
     matches = state.artifacts.get("retrieved_examples_json", {}).get("matches", [])
     selected_slugs = {m["slug"] for m in matches[:top_k]}
@@ -486,6 +532,11 @@ def tool_generate_target_resume(state: AgentState, llm: Any, top_k: int = 2) -> 
         for ex in selected_examples
     )
 
+    # Build an evidence grounding block from fit_analysis_json when available.
+    # Running score_resume_fit before generation anchors the LLM to verified
+    # resume lines rather than letting it drift into unsupported claims.
+    evidence_grounding_block = _build_evidence_grounding_block(state)
+
     prompt = f"""
 You are helping create a targeted resume variant.
 
@@ -495,12 +546,15 @@ TARGET JOB DESCRIPTION:
 RAW BASE RESUME:
 {state.resume_text}
 
+{evidence_grounding_block}
 REFERENCE EXAMPLES FROM PRIOR SUCCESSFUL / HIGH-QUALITY VARIANTS:
 {examples_block if examples_block else "(none)"}
 
 Instructions:
 - Write a tailored plain-text resume variant for the target role.
 - Reuse only facts supported by the raw base resume.
+- When evidence grounding is provided above, use those specific snippets to anchor bullet points.
+- For uncovered requirements (gaps), do not invent coverage — either omit or frame honestly.
 - Use the reference examples only for style, framing, emphasis, and bullet construction.
 - Do not invent experience.
 - Preserve a professional, concise tone.

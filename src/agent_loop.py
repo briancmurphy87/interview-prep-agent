@@ -17,6 +17,8 @@ ToolName = Literal[
     "load_resume_corpus",
     "extract_jd_requirements",
     "retrieve_similar_resume_examples",
+    "find_resume_evidence",
+    "score_resume_fit",
     "generate_target_resume",
     "dump_state_summary",
 ]
@@ -40,21 +42,24 @@ Your only workflow is:
 1. load_resume_corpus
 2. extract_jd_requirements
 3. retrieve_similar_resume_examples
-4. generate_target_resume
-5. final
+4. score_resume_fit          <- run BEFORE generation to anchor evidence
+5. generate_target_resume    <- uses evidence grounding from step 4
+6. final
 
 Available tools:
 
 1) load_resume_corpus(corpus_dir:str)
 2) extract_jd_requirements(top_k:int)
 3) retrieve_similar_resume_examples(top_k:int)
-4) generate_target_resume(top_k:int)
-5) dump_state_summary()
+4) score_resume_fit()          <- no args needed; reads requirements from prior step
+5) generate_target_resume(top_k:int)
+6) dump_state_summary()
 
 Rules:
 - Your goal is to produce a targeted resume for the target job description.
 - Use tools instead of guessing when tools can provide the information.
 - Prefer the exact sequence shown above.
+- Run score_resume_fit before generate_target_resume so the generation prompt is grounded in verified evidence.
 - Do not return final until target_resume_txt exists in artifacts.
 - Return JSON only. No markdown fences. No extra prose.
 
@@ -75,6 +80,7 @@ def _build_user_prompt(state: AgentState) -> str:
             "artifact_keys": sorted(state.artifacts.keys()),
             "has_requirements": "requirements_json" in state.artifacts,
             "has_retrieved_examples": "retrieved_examples_json" in state.artifacts,
+            "has_fit_analysis": "fit_analysis_json" in state.artifacts,
             "has_target_resume": "target_resume_txt" in state.artifacts,
             "corpus_dir": state.artifacts.get("corpus_dir"),
         },

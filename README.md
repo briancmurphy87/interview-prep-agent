@@ -25,8 +25,8 @@ the agent:
 
 1. Extracts the most important job requirements
 2. Retrieves similar examples from the resume corpus
-3. Generates a **targeted resume**
-4. Scores how well the resume fits the job
+3. Scores resume fit and identifies coverage gaps
+4. Generates a **targeted resume** conditioned on verified evidence
 5. Uses an **LLM-based evaluator** to critique the resume
 6. Produces a detailed **review report**
 
@@ -78,9 +78,9 @@ resume corpus
        ↓
 agent retrieves similar resume examples
        ↓
-generate targeted resume
+score fit + identify evidence gaps       <- grounds generation in real data
        ↓
-fit analysis
+generate targeted resume (evidence-conditioned)
        ↓
 LLM resume evaluation
        ↓
@@ -136,12 +136,13 @@ evals/
 
 The agent does not directly generate everything.
 
-Instead it decides which tools to call:
+Instead it decides which tools to call, in this order:
 
 - `load_resume_corpus`
 - `extract_jd_requirements`
 - `retrieve_similar_resume_examples`
-- `generate_target_resume`
+- `score_resume_fit`          ← runs before generation to surface evidence
+- `generate_target_resume`    ← conditioned on verified evidence and gaps
 
 This keeps reasoning separated from implementation.
 
@@ -155,13 +156,26 @@ This dramatically improves the quality of the generated resume.
 
 ---
 
+## Evidence-Grounded Generation
+
+Fit scoring now runs **before** generation, not after.
+
+The generation prompt receives:
+- verified resume snippets per requirement
+- a list of uncovered gaps
+
+This anchors the LLM to real candidate evidence and reduces hallucination risk.
+If fit scoring has not yet run (e.g. agent fallback), generation still proceeds with raw resume alone.
+
+---
+
 ## Deterministic Evaluation Pipeline
 
 After the resume is generated, Python code performs:
 
 - requirement matching
 - evidence extraction
-- fit scoring
+- fit scoring (if not already done in the agent loop)
 
 This ensures evaluation remains reproducible and explainable.
 

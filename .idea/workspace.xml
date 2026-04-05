@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dec2c31b-95fe-4d21-849f-da88b8df83b4" name="Changes" comment="start to update readme for new functionality">
-      <change afterPath="$PROJECT_DIR$/resume_corpus/netflix_distributed_systems_engineer_L5_data_platform/jd.txt" afterDir="false" />
+    <list default="true" id="dec2c31b-95fe-4d21-849f-da88b8df83b4" name="Changes" comment="include screenshots of example outputs">
+      <change beforePath="$PROJECT_DIR$/resume_corpus/netflix_swe_n_tech/jd.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resume_corpus/netflix_swe_n_tech/jd.txt" afterDir="false" />
     </list>
     <list id="4f95b601-ca31-439e-9969-39b72418acf1" name="try ignore" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/interview-prep-agent.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +24,13 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="brian/ftr-fit-eval-agent" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -35,6 +38,16 @@
     &quot;assignee&quot;: &quot;briancmurphy87&quot;
   }
 }</component>
+  <component name="GitRewordedCommitMessages">
+    <option name="commitMessagesMapping">
+      <RewordedCommitMessageMapping>
+        <option name="originalMessage" value="add observability instrumentation across agent pipeline&#10;&#10;For every tool call and every LLM API call, the system now captures and&#10;records timing, size, token usage, and estimated cost.&#10;&#10;src/llm.py&#10;  - LLM.__init__ gains call_log: list[dict] (one entry per complete() call)&#10;  - LLM.complete() wraps the API call with time.monotonic() and appends a&#10;    span containing: ok, duration_ms, model, input_chars, output_chars,&#10;    input_tokens, output_tokens, estimated_cost_usd, error (on failure)&#10;  - Token usage is extracted from resp.usage safely via getattr (None if absent)&#10;  - _estimate_cost() looks up per-million-token rates for known OpenAI models&#10;    (gpt-4.1-mini, gpt-4.1-nano, gpt-4.1, gpt-4o, gpt-4o-mini)&#10;&#10;src/agent_state.py&#10;  - add_tool_history() accepts three new optional kwargs: duration_ms,&#10;    input_chars, output_chars — stored in the tool_history entry when provided&#10;&#10;src/agent_loop.py&#10;  - All tool dispatch paths now record duration_ms and input_chars; successful&#10;    paths also record output_chars&#10;  - Covers: generate_target_resume dispatch, generic TOOLS[] dispatch, and both&#10;    fallback generate_target_resume calls (premature-final guard + max-iters)&#10;&#10;src/observability.py (new)&#10;  - build_run_artifact(run_id, llm, state) assembles the run artifact dict:&#10;      run_id, model, tools (spans from tool_history), llm_calls (from&#10;      llm.call_log), totals (summed duration_ms, llm_call_count,&#10;      estimated_cost_usd)&#10;&#10;src/run_evals.py&#10;  - _run_case() now accepts run_id, calls build_run_artifact(), and includes&#10;    the result in its return dict&#10;  - _save_case_outputs() writes run_artifact.json alongside other per-case files&#10;  - main() generates run_id = &quot;&lt;timestamp&gt;_&lt;slug&gt;&quot; per case before dispatching&#10;&#10;tests/test_agent_loop.py&#10;  - Updated test_run_agent_happy_path: the premature-final fallback now records&#10;    its failed generate_target_resume attempt in tool_history, so expected&#10;    count is 4 (3 successful + 1 failed fallback); test now asserts on this&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;" />
+        <option name="rewordedMessage" value="add observability instrumentation across agent pipeline&#10;&#10;For every tool call and every LLM API call, the system now captures and&#10;records timing, size, token usage, and estimated cost.&#10;&#10;src/llm.py&#10;  - LLM.__init__ gains call_log: list[dict] (one entry per complete() call)&#10;  - LLM.complete() wraps the API call with time.monotonic() and appends a&#10;    span containing: ok, duration_ms, model, input_chars, output_chars,&#10;    input_tokens, output_tokens, estimated_cost_usd, error (on failure)&#10;  - Token usage is extracted from resp.usage safely via getattr (None if absent)&#10;  - _estimate_cost() looks up per-million-token rates for known OpenAI models&#10;    (gpt-4.1-mini, gpt-4.1-nano, gpt-4.1, gpt-4o, gpt-4o-mini)&#10;&#10;src/agent_state.py&#10;  - add_tool_history() accepts three new optional kwargs: duration_ms,&#10;    input_chars, output_chars — stored in the tool_history entry when provided&#10;&#10;src/agent_loop.py&#10;  - All tool dispatch paths now record duration_ms and input_chars; successful&#10;    paths also record output_chars&#10;  - Covers: generate_target_resume dispatch, generic TOOLS[] dispatch, and both&#10;    fallback generate_target_resume calls (premature-final guard + max-iters)&#10;&#10;src/observability.py (new)&#10;  - build_run_artifact(run_id, llm, state) assembles the run artifact dict:&#10;      run_id, model, tools (spans from tool_history), llm_calls (from&#10;      llm.call_log), totals (summed duration_ms, llm_call_count,&#10;      estimated_cost_usd)&#10;&#10;src/run_evals.py&#10;  - _run_case() now accepts run_id, calls build_run_artifact(), and includes&#10;    the result in its return dict&#10;  - _save_case_outputs() writes run_artifact.json alongside other per-case files&#10;  - main() generates run_id = &quot;&lt;timestamp&gt;_&lt;slug&gt;&quot; per case before dispatching&#10;&#10;tests/test_agent_loop.py&#10;  - Updated test_run_agent_happy_path: the premature-final fallback now records&#10;    its failed generate_target_resume attempt in tool_history, so expected&#10;    count is 4 (3 successful + 1 failed fallback); test now asserts on this&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;&#10;&#10;update README for observability addition&#10;&#10;- Add observability.py to project structure&#10;- Add run_artifact.json to per-case eval output file list&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;" />
+      </RewordedCommitMessageMapping>
+    </option>
+    <option name="currentCommit" value="1" />
+    <option name="onto" value="ac42612a5008cebbb413e69da7e5eeffe80e8ee3" />
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;git@github.com:briancmurphy87/interview-prep-agent.git&quot;,
@@ -64,12 +77,13 @@
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Python.agent.executor&quot;: &quot;Run&quot;,
+    &quot;Python.query_posns.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;brian/ftr-fit-eval-agent&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/brianmurphy/PycharmProjects/interview-prep-agent/job_specs&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;org.jetbrains.plugins.github.ui.GithubSettingsConfigurable&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -78,14 +92,14 @@
       <recent name="$PROJECT_DIR$/src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resume_corpus/netflix_distributed_systems_engineer_L5_data_platform" />
+      <recent name="$PROJECT_DIR$/resume_corpus/snowflake_sr_solutions_engineer" />
       <recent name="$PROJECT_DIR$/resources" />
+      <recent name="$PROJECT_DIR$/resume_corpus/netflix_distributed_systems_engineer_L5_data_platform" />
       <recent name="$PROJECT_DIR$/resume_corpus" />
       <recent name="$PROJECT_DIR$/resume_corpus/imc_swe_cpp" />
-      <recent name="$PROJECT_DIR$/resume_corpus/netflix_swe5" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.query_posns">
     <configuration name="agent" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="interview-prep-agent" />
       <option name="ENV_FILES" value="" />
@@ -108,8 +122,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="query_posns" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="hyperliquid_exercise" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../hyperliquid_exercise/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../hyperliquid_exercise/src/query_posns.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.query_posns" />
         <item itemvalue="Python.agent" />
       </list>
     </recent_temporary>
@@ -442,7 +479,15 @@
       <option name="project" value="LOCAL" />
       <updated>1773684170322</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="include screenshots of example outputs">
+      <option name="closed" value="true" />
+      <created>1773684387378</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1773684387378</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -450,16 +495,25 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add separate folder for sample job specs" />
-    <MESSAGE value="adding test fixtures" />
-    <MESSAGE value="current _REQUIREMENT_HINTS set does not include some Netflix-important terms like:&#10;- python&#10;- java&#10;- api&#10;- apis&#10;- genai&#10;- llm&#10;- workflow&#10;- integrations&#10;&#10;Right now the extractor may still find some of these if frequency and token length help, but it would be better to add them explicitly because they are central to the job spec. &#10;&#10;The posting explicitly asks for backend technologies, GenAI/LLMs, Python and/or Java, APIs, integrations, and cloud platforms." />
     <MESSAGE value="revise test fixture for netflix swe5 role" />
     <MESSAGE value="upgrade that makes requirement extraction noticeably better for Netflix-style backend / internal-platform / GenAI-adjacent roles, while keeping the project simple and deterministic" />
     <MESSAGE value="update keyword list to be slightly more phrase-oriented" />
@@ -482,6 +536,20 @@
     <MESSAGE value="For every generated resume, add a second LLM call that scores it on:&#10;-JD alignment&#10;- keyword coverage&#10;- clarity&#10;- exaggeration risk&#10;- ATS compatibility&#10;And returns:&#10;- numeric scores&#10;- brief rationale&#10;- concrete revision suggestions" />
     <MESSAGE value="add outputs" />
     <MESSAGE value="start to update readme for new functionality" />
-    <option name="LAST_COMMIT_MESSAGE" value="start to update readme for new functionality" />
+    <MESSAGE value="include screenshots of example outputs" />
+    <MESSAGE value="add evaluation harness: batch runner and three eval cases&#10;&#10;src/run_evals.py — new batch evaluation runner&#10;  - Discovers eval cases under --eval-dir (any subdir with jd.txt + raw_resume.txt)&#10;  - Runs the full agent pipeline per case: load corpus → extract requirements →&#10;    retrieve similar examples → generate targeted resume&#10;  - Applies post-loop safety net matching agent.py:main(): fit scoring,&#10;    LLM evaluation, and report rendering&#10;  - Saves all artifacts per case to --out-dir/&lt;slug&gt;/&#10;      target_resume.txt, report.md, requirements.json,&#10;      retrieved_examples.json, evaluation.json, run_metadata.json&#10;  - Validates extracted requirements against expected_requirements.json&#10;    (min_keyword_matches threshold) when present&#10;  - Writes a summary JSON to evals/summaries/summary_&lt;timestamp&gt;.json with:&#10;      aggregate averages for overall score, JD alignment, keyword coverage,&#10;      exaggeration safety, ATS compatibility, and deterministic fit score;&#10;      retrieval hit rate; failed run count; requirement validation pass/fail&#10;&#10;evals/cases/ — three bootstrapped eval cases&#10;  - netflix_swe_n_tech: internal SWE role, GenAI/LLM/Python/cloud focus&#10;  - google_cloud_ai_ml: Cloud AI Engineer, ML/GCP/Python/data pipelines focus&#10;  - databricks_ml_ai_finserv: ML/AI SSA, LLM/MLOps/cloud/data focus&#10;  Each case includes jd.txt, raw_resume.txt, and expected_requirements.json&#10;&#10;evals/outputs/ and evals/summaries/ tracked via .gitkeep&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;&#10;&#10;update README for evaluation harness addition&#10;&#10;- Add run_evals.py to project structure section&#10;- Add evals/ directory layout with cases, outputs, and summaries&#10;- Add batch evaluation usage example with correct CLI flags&#10;  (also fixes single-run flags: --out-resume / --out-report)&#10;- Add Batch Evaluation Harness section under Key Concepts with&#10;  per-case output file list and summary metrics table&#10;- Add evaluation harness to the intro bullet list&#10;- Update Possible Extensions to reflect what is now built&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;" />
+    <MESSAGE value="add observability instrumentation across agent pipeline&#10;&#10;For every tool call and every LLM API call, the system now captures and&#10;records timing, size, token usage, and estimated cost.&#10;&#10;src/llm.py&#10;  - LLM.__init__ gains call_log: list[dict] (one entry per complete() call)&#10;  - LLM.complete() wraps the API call with time.monotonic() and appends a&#10;    span containing: ok, duration_ms, model, input_chars, output_chars,&#10;    input_tokens, output_tokens, estimated_cost_usd, error (on failure)&#10;  - Token usage is extracted from resp.usage safely via getattr (None if absent)&#10;  - _estimate_cost() looks up per-million-token rates for known OpenAI models&#10;    (gpt-4.1-mini, gpt-4.1-nano, gpt-4.1, gpt-4o, gpt-4o-mini)&#10;&#10;src/agent_state.py&#10;  - add_tool_history() accepts three new optional kwargs: duration_ms,&#10;    input_chars, output_chars — stored in the tool_history entry when provided&#10;&#10;src/agent_loop.py&#10;  - All tool dispatch paths now record duration_ms and input_chars; successful&#10;    paths also record output_chars&#10;  - Covers: generate_target_resume dispatch, generic TOOLS[] dispatch, and both&#10;    fallback generate_target_resume calls (premature-final guard + max-iters)&#10;&#10;src/observability.py (new)&#10;  - build_run_artifact(run_id, llm, state) assembles the run artifact dict:&#10;      run_id, model, tools (spans from tool_history), llm_calls (from&#10;      llm.call_log), totals (summed duration_ms, llm_call_count,&#10;      estimated_cost_usd)&#10;&#10;src/run_evals.py&#10;  - _run_case() now accepts run_id, calls build_run_artifact(), and includes&#10;    the result in its return dict&#10;  - _save_case_outputs() writes run_artifact.json alongside other per-case files&#10;  - main() generates run_id = &quot;&lt;timestamp&gt;_&lt;slug&gt;&quot; per case before dispatching&#10;&#10;tests/test_agent_loop.py&#10;  - Updated test_run_agent_happy_path: the premature-final fallback now records&#10;    its failed generate_target_resume attempt in tool_history, so expected&#10;    count is 4 (3 successful + 1 failed fallback); test now asserts on this&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;&#10;&#10;update README for observability addition&#10;&#10;- Add observability.py to project structure&#10;- Add run_artifact.json to per-case eval output file list&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="add observability instrumentation across agent pipeline&#10;&#10;For every tool call and every LLM API call, the system now captures and&#10;records timing, size, token usage, and estimated cost.&#10;&#10;src/llm.py&#10;  - LLM.__init__ gains call_log: list[dict] (one entry per complete() call)&#10;  - LLM.complete() wraps the API call with time.monotonic() and appends a&#10;    span containing: ok, duration_ms, model, input_chars, output_chars,&#10;    input_tokens, output_tokens, estimated_cost_usd, error (on failure)&#10;  - Token usage is extracted from resp.usage safely via getattr (None if absent)&#10;  - _estimate_cost() looks up per-million-token rates for known OpenAI models&#10;    (gpt-4.1-mini, gpt-4.1-nano, gpt-4.1, gpt-4o, gpt-4o-mini)&#10;&#10;src/agent_state.py&#10;  - add_tool_history() accepts three new optional kwargs: duration_ms,&#10;    input_chars, output_chars — stored in the tool_history entry when provided&#10;&#10;src/agent_loop.py&#10;  - All tool dispatch paths now record duration_ms and input_chars; successful&#10;    paths also record output_chars&#10;  - Covers: generate_target_resume dispatch, generic TOOLS[] dispatch, and both&#10;    fallback generate_target_resume calls (premature-final guard + max-iters)&#10;&#10;src/observability.py (new)&#10;  - build_run_artifact(run_id, llm, state) assembles the run artifact dict:&#10;      run_id, model, tools (spans from tool_history), llm_calls (from&#10;      llm.call_log), totals (summed duration_ms, llm_call_count,&#10;      estimated_cost_usd)&#10;&#10;src/run_evals.py&#10;  - _run_case() now accepts run_id, calls build_run_artifact(), and includes&#10;    the result in its return dict&#10;  - _save_case_outputs() writes run_artifact.json alongside other per-case files&#10;  - main() generates run_id = &quot;&lt;timestamp&gt;_&lt;slug&gt;&quot; per case before dispatching&#10;&#10;tests/test_agent_loop.py&#10;  - Updated test_run_agent_happy_path: the premature-final fallback now records&#10;    its failed generate_target_resume attempt in tool_history, so expected&#10;    count is 4 (3 successful + 1 failed fallback); test now asserts on this&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;&#10;&#10;update README for observability addition&#10;&#10;- Add observability.py to project structure&#10;- Add run_artifact.json to per-case eval output file list&#10;&#10;Co-Authored-By: Claude Sonnet 4.6 &lt;noreply@anthropic.com&gt;" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../hyperliquid_exercise/src/query_posns.py</url>
+          <line>41</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

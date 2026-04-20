@@ -127,11 +127,13 @@ def test_run_agent_premature_final_triggers_generate_fallback() -> None:
 
 
 def test_run_agent_tool_argument_mismatch_records_error_and_continues() -> None:
-    # score_resume_fit requires `requirements` arg; omitting it causes TypeError.
+    # find_resume_evidence requires `requirement` arg; omitting it causes TypeError.
+    # (score_resume_fit no longer requires explicit args — it reads from artifacts.)
     llm = FakeLLM(
         outputs=[
-            '{"tool":"score_resume_fit","args":{}}',   # missing required arg
+            '{"tool":"find_resume_evidence","args":{}}',   # missing required `requirement` arg
             '{"tool":"extract_jd_requirements","args":{"top_k":3}}',
+            '{"tool":"score_resume_fit","args":{}}',
             '{"tool":"render_report","args":{}}',
             '{"final":"done"}',
         ]
@@ -140,7 +142,7 @@ def test_run_agent_tool_argument_mismatch_records_error_and_continues() -> None:
     state = run_agent(llm=llm, state=make_state(), max_iters=8)
 
     # First entry should record the argument mismatch
-    assert state.tool_history[0]["tool"] == "score_resume_fit"
+    assert state.tool_history[0]["tool"] == "find_resume_evidence"
     assert "argument_mismatch" in state.tool_history[0]["error"]
     # Loop recovered and continued to produce subsequent artifacts
     assert "requirements_json" in state.artifacts

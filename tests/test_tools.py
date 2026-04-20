@@ -130,6 +130,23 @@ def test_score_resume_fit_empty_requirements_returns_zero_no_crash() -> None:
     assert "fit_analysis_json" in state.artifacts
 
 
+def test_score_resume_fit_reads_requirements_from_artifacts_when_none_given() -> None:
+    # After extract_jd_requirements runs, score_resume_fit() can be called with
+    # no args; it should fall back to requirements_json in state artifacts.
+    state = make_state()
+    tool_extract_jd_requirements(state, top_k=5)
+    assert "requirements_json" in state.artifacts
+
+    result = tool_score_resume_fit(state)   # no requirements kwarg
+
+    assert "score" in result
+    assert "fit_analysis_json" in state.artifacts
+    # requirements used should match what was extracted
+    extracted = state.artifacts["requirements_json"]["requirements"]
+    all_reqs = [m["requirement"] for m in result["matched"]] + result["gaps"]
+    assert sorted(all_reqs) == sorted(extracted)
+
+
 # ---------------------------------------------------------------------------
 # tool_render_report — with LLM evaluation payload present
 # ---------------------------------------------------------------------------

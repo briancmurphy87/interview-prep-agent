@@ -53,6 +53,7 @@ from src.observability import build_run_artifact
 from src.tools import (
     tool_evaluate_target_resume,
     tool_render_report,
+    tool_revise_target_resume,
     tool_score_resume_fit,
 )
 
@@ -112,7 +113,9 @@ def _run_case(case_dir: Path, corpus_dir: str, llm: LLM, run_id: str) -> dict[st
     try:
         state = run_agent(llm=llm, state=state)
 
-        # Post-loop safety net — mirrors the logic in agent.py:main()
+        # Post-loop pipeline — mirrors the logic in agent.py:main().
+        # All four stages run unconditionally so every case produces complete
+        # artifacts for comparison in the summary.
         requirements = state.artifacts.get("requirements_json", {}).get("requirements", [])
 
         if "fit_analysis_json" not in state.artifacts and requirements:
@@ -124,6 +127,11 @@ def _run_case(case_dir: Path, corpus_dir: str, llm: LLM, run_id: str) -> dict[st
 
         if "resume_evaluation_json" not in state.artifacts:
             tool_evaluate_target_resume(state=state, llm=llm)
+
+        # Revision pass: revises the draft if the initial score is below
+        # REVISION_THRESHOLD and re-evaluates the revised version.
+        if "revision_metadata_json" not in state.artifacts:
+            tool_revise_target_resume(state=state, llm=llm)
 
         if "report_md" not in state.artifacts:
             tool_render_report(state)
@@ -137,10 +145,21 @@ def _run_case(case_dir: Path, corpus_dir: str, llm: LLM, run_id: str) -> dict[st
 
     elapsed = round(time.monotonic() - start, 2)
 
-    # Extract scores into a flat dict for easy aggregation
+    # Extract scores into a flat dict for easy aggregation.
+    # When revision was triggered, final_overall uses the revised score so
+    # the summary reflects the best outcome for each case.
     evaluation = state.artifacts.get("resume_evaluation_json", {})
+    revision_eval = state.artifacts.get("revision_evaluation_json", {})
+    revision_meta = state.artifacts.get("revision_metadata_json", {})
+
+    initial_overall: int | None = evaluation.get("overall_score")
+    revised_overall: int | None = revision_eval.get("overall_score") if revision_meta.get("triggered") else None
+    final_overall = revised_overall if revised_overall is not None else initial_overall
+
     scores: dict[str, int | None] = {
-        "overall": evaluation.get("overall_score"),
+        "overall": final_overall,
+        "initial_overall": initial_overall,
+        "revised_overall": revised_overall,
         "jd_alignment": (evaluation.get("jd_alignment") or {}).get("score"),
         "keyword_coverage": (evaluation.get("keyword_coverage") or {}).get("score"),
         "exaggeration_safety": (evaluation.get("exaggeration_risk") or {}).get("score"),
@@ -234,12 +253,15 @@ def _save_case_outputs(result: dict[str, Any], out_dir: Path) -> None:
 
     artifact_map = {
         "target_resume_txt": "target_resume.txt",
+        "revised_resume_txt": "revised_resume.txt",  # present only when revision triggered
         "report_md": "report.md",
     }
     json_artifact_map = {
         "requirements_json": "requirements.json",
         "retrieved_examples_json": "retrieved_examples.json",
         "resume_evaluation_json": "evaluation.json",
+        "revision_evaluation_json": "revision_evaluation.json",  # present only when revision triggered
+        "revision_metadata_json": "revision_metadata.json",
     }
 
     for key, filename in artifact_map.items():
@@ -405,12 +427,18 @@ def main() -> None:
             val_str = ""
             if val is not None:
                 val_str = f" | reqs={'PASS' if val['passed'] else 'FAIL'} ({val['matched_count']}/{val['min_required']})"
+            # Show revision delta when it was triggered
+            rev_str = ""
+            if s.get("revised_overall") is not None:
+                delta = (s["revised_overall"] or 0) - (s["initial_overall"] or 0)
+                rev_str = f" | revised={s['revised_overall']} ({delta:+d})"
             print(
                 f"[{slug}] OK ({result['elapsed_seconds']}s)"
                 f" | overall={s['overall']}"
                 f" | jd_align={s['jd_alignment']}"
                 f" | kw_cov={s['keyword_coverage']}"
                 f" | retrieval={hit}"
+                f"{rev_str}"
                 f"{val_str}"
             )
         else:

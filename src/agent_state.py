@@ -7,8 +7,26 @@ from dataclasses import dataclass, field
 from typing import Any, Literal
 
 ArtifactKey = Literal[
+    # Inputs / routing
+    "corpus_dir",
+    # Corpus loading
+    "corpus_summary_json",
+    # Requirement extraction
     "requirements_json",
+    # Retrieval
+    "retrieved_examples_json",
+    # Fit scoring
     "fit_analysis_json",
+    # Generation
+    "target_resume_txt",
+    "generation_metadata_json",
+    # Evaluation of initial draft
+    "resume_evaluation_json",
+    # Revision pass (triggered when initial score < threshold)
+    "revised_resume_txt",
+    "revision_evaluation_json",
+    "revision_metadata_json",
+    # Report
     "report_md",
 ]
 

@@ -406,6 +406,42 @@ def tool_render_report(state: AgentState) -> ToolResult:
         lines.append("- No LLM evaluation available.")
         lines.append("")
 
+    # --- Revision pass summary ---
+    revision_meta = state.artifacts.get("revision_metadata_json", {})
+    revision_eval = state.artifacts.get("revision_evaluation_json", {})
+
+    lines.append("## Revision Pass")
+    lines.append("")
+
+    if revision_meta:
+        if revision_meta.get("triggered"):
+            initial = revision_meta.get("initial_score", "N/A")
+            revised = revision_meta.get("revised_score", "N/A")
+            delta = revision_meta.get("delta")
+            delta_str = f" ({'+' if delta and delta >= 0 else ''}{delta} points)" if delta is not None else ""
+            lines.append(f"- Revision triggered: **Yes**")
+            lines.append(f"- Initial score: **{initial}/100**")
+            lines.append(f"- Revised score: **{revised}/100**{delta_str}")
+            if revision_eval:
+                lines.append("")
+                lines.append("### Revised Resume Evaluation")
+                lines.append("")
+                for key, label in [
+                    ("jd_alignment", "JD Alignment"),
+                    ("keyword_coverage", "Keyword Coverage"),
+                ]:
+                    section = revision_eval.get(key, {})
+                    rev_score = section.get("score", "N/A")
+                    rev_reason = section.get("reason", "")
+                    lines.append(f"- {label}: **{rev_score}/100** — {rev_reason}")
+        else:
+            initial = revision_meta.get("initial_score", "N/A")
+            threshold = revision_meta.get("threshold", REVISION_THRESHOLD)
+            lines.append(f"- Revision triggered: **No** (score {initial} >= threshold {threshold})")
+    else:
+        lines.append("- Revision pass did not run.")
+    lines.append("")
+
     # finalize report
     report_md = "\n".join(lines).strip() + "\n"
     state.artifacts["report_md"] = report_md
@@ -429,12 +465,17 @@ def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any
     Load corpus examples from:
       resume_corpus/<slug>/jd.txt or jd.md
       resume_corpus/<slug>/resume_variant.txt
+
+    Directories that are missing either file are skipped rather than crashing.
+    The returned payload includes a `skipped` list so callers can see exactly
+    which entries were dropped and why — useful for diagnosing corpus gaps.
     """
     base = Path(corpus_dir)
     if not base.exists():
         raise FileNotFoundError(f"Corpus directory does not exist: {corpus_dir}")
 
     examples: list[CorpusExample] = []
+    skipped: list[dict[str, str]] = []
 
     for child in sorted(base.iterdir()):
         if not child.is_dir():
@@ -444,16 +485,21 @@ def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any
         jd_path_md = child / "jd.md"
         resume_variant_path = child / "resume_variant.txt"
 
-        if not resume_variant_path.exists():
-            continue
-
         jd_path = None
         if jd_path_txt.exists():
             jd_path = jd_path_txt
         elif jd_path_md.exists():
             jd_path = jd_path_md
 
+        # Determine skip reason (if any) before deciding to load.
+        if jd_path is None and not resume_variant_path.exists():
+            skipped.append({"slug": child.name, "reason": "missing jd.txt/jd.md and resume_variant.txt"})
+            continue
         if jd_path is None:
+            skipped.append({"slug": child.name, "reason": "missing jd.txt/jd.md"})
+            continue
+        if not resume_variant_path.exists():
+            skipped.append({"slug": child.name, "reason": "missing resume_variant.txt"})
             continue
 
         examples.append(
@@ -465,9 +511,11 @@ def tool_load_resume_corpus(state: AgentState, corpus_dir: str) -> dict[str, Any
         )
 
     state.corpus_examples = examples
-    payload = {
-        "num_examples": len(examples),
+    payload: dict[str, Any] = {
+        "num_examples_loaded": len(examples),
+        "num_examples_skipped": len(skipped),
         "slugs": [ex.slug for ex in examples],
+        "skipped": skipped,
     }
     state.artifacts["corpus_summary_json"] = payload
     return payload
@@ -578,21 +626,20 @@ Instructions:
     }
 
 
-def tool_evaluate_target_resume(state: AgentState, llm: Any) -> dict[str, Any]:
+def _evaluate_resume(
+    jd_text: str,
+    resume_text: str,
+    target_resume: str,
+    llm: Any,
+) -> dict[str, Any]:
     """
-    LLM-as-judge evaluation of the generated resume.
+    Pure evaluation function — calls the LLM and returns parsed JSON scores.
 
-    Evaluates:
-    - JD alignment
-    - keyword coverage
-    - clarity
-    - exaggeration risk
-    - ATS compatibility
+    Extracted from tool_evaluate_target_resume so it can be reused by the
+    revision pass without state side-effects.
+
+    Raises ValueError if the LLM returns non-JSON output.
     """
-    target_resume = state.artifacts.get("target_resume_txt", "").strip()
-    if not target_resume:
-        raise ValueError("target_resume_txt not found in artifacts")
-
     prompt = f"""
 You are a strict resume evaluator.
 
@@ -608,10 +655,10 @@ Your job is to assess whether the generated resume is:
 - reasonably ATS-friendly
 
 TARGET JOB DESCRIPTION:
-{state.jd_text}
+{jd_text}
 
 RAW BASE RESUME:
-{state.resume_text}
+{resume_text}
 
 GENERATED RESUME:
 {target_resume}
@@ -640,18 +687,15 @@ Return JSON only with this exact schema:
     "reason": "<short explanation>"
   }},
   "red_flags": [
-    "<possible unsupported or risky claim>",
     "<possible unsupported or risky claim>"
   ],
   "suggested_improvements": [
-    "<specific improvement>",
-    "<specific improvement>",
     "<specific improvement>"
   ]
 }}
 Scoring note:
 - Higher is better for jd_alignment, keyword_coverage, clarity, ats_compatibility.
-- Higher is worse for exaggeration_risk? No. Instead define exaggeration_risk score such that higher = safer / lower risk.
+- exaggeration_risk: higher score = safer (lower risk of unsupported claims).
 - Be skeptical. Do not assume unsupported claims are valid.
 """.strip()
 
@@ -661,12 +705,152 @@ Scoring note:
     )
 
     try:
-        payload = json.loads(raw)
+        return json.loads(raw)
     except json.JSONDecodeError as e:
         raise ValueError(f"Evaluator returned invalid JSON: {raw}") from e
 
+
+def tool_evaluate_target_resume(state: AgentState, llm: Any) -> dict[str, Any]:
+    """
+    LLM-as-judge evaluation of the generated resume.
+
+    Evaluates across five dimensions:
+    - JD alignment
+    - keyword coverage
+    - clarity
+    - exaggeration risk (higher = safer)
+    - ATS compatibility
+
+    Writes result to state.artifacts["resume_evaluation_json"].
+    """
+    target_resume = state.artifacts.get("target_resume_txt", "").strip()
+    if not target_resume:
+        raise ValueError("target_resume_txt not found in artifacts")
+
+    payload = _evaluate_resume(state.jd_text, state.resume_text, target_resume, llm)
     state.artifacts["resume_evaluation_json"] = payload
     return payload
+
+
+# Score threshold below which the revision pass is triggered.
+# A resume scoring below this is sent back to the LLM with evaluator
+# feedback for one additional revision attempt.
+REVISION_THRESHOLD = 70
+
+
+def tool_revise_target_resume(
+    state: AgentState,
+    llm: Any,
+    revision_threshold: int = REVISION_THRESHOLD,
+) -> dict[str, Any]:
+    """
+    Revision pass: generate → evaluate → revise.
+
+    If the initial evaluation score (resume_evaluation_json.overall_score) is
+    below `revision_threshold`, the LLM is asked to produce an improved draft
+    using the evaluator's red flags and suggested improvements as input.
+
+    The revised draft is then evaluated independently so callers can compare
+    initial_score vs revised_score.
+
+    Artifacts written:
+      revision_metadata_json  — always written; records trigger decision
+      revised_resume_txt      — written only when revision is triggered
+      revision_evaluation_json — written only when revision is triggered
+
+    Returns revision_metadata_json.
+    """
+    evaluation = state.artifacts.get("resume_evaluation_json", {})
+    initial_score: int | None = evaluation.get("overall_score")
+
+    if initial_score is None:
+        metadata: dict[str, Any] = {
+            "triggered": False,
+            "initial_score": None,
+            "threshold": revision_threshold,
+            "reason": "no evaluation available; skipping revision",
+        }
+        state.artifacts["revision_metadata_json"] = metadata
+        return metadata
+
+    if initial_score >= revision_threshold:
+        metadata = {
+            "triggered": False,
+            "initial_score": initial_score,
+            "threshold": revision_threshold,
+            "reason": f"score {initial_score} >= threshold {revision_threshold}; revision not needed",
+        }
+        state.artifacts["revision_metadata_json"] = metadata
+        return metadata
+
+    # --- Revision triggered ---
+    original_resume = state.artifacts.get("target_resume_txt", "").strip()
+    red_flags = evaluation.get("red_flags", [])
+    improvements = evaluation.get("suggested_improvements", [])
+    jd_reason = (evaluation.get("jd_alignment") or {}).get("reason", "")
+    kw_reason = (evaluation.get("keyword_coverage") or {}).get("reason", "")
+
+    flags_block = (
+        "\n".join(f"  - {f}" for f in red_flags) if red_flags else "  (none)"
+    )
+    improvements_block = (
+        "\n".join(f"  - {i}" for i in improvements) if improvements else "  (none)"
+    )
+
+    prompt = f"""You are a resume editor improving a draft that scored {initial_score}/100.
+
+TARGET JOB DESCRIPTION:
+{state.jd_text}
+
+RAW BASE RESUME:
+{state.resume_text}
+
+ORIGINAL DRAFT RESUME (to be improved):
+{original_resume}
+
+EVALUATOR FEEDBACK:
+- Overall score: {initial_score}/100 (revision triggered because score < {revision_threshold})
+- JD alignment: {jd_reason}
+- Keyword coverage: {kw_reason}
+
+Red flags to address:
+{flags_block}
+
+Suggested improvements:
+{improvements_block}
+
+Instructions:
+- Produce an improved version of the resume that directly addresses the red flags and improvements above.
+- Only use facts supported by the raw base resume; do not invent experience.
+- Improve keyword alignment with the job description where the evidence supports it.
+- Output only the revised resume text.
+""".strip()
+
+    revised = llm.complete(
+        system="You are a precise resume editor. Output only resume text.",
+        user=prompt,
+    )
+
+    state.artifacts["revised_resume_txt"] = revised
+
+    # Evaluate the revised draft using the same rubric as the initial pass.
+    # _evaluate_resume is a pure function — no state mutation — so the original
+    # resume_evaluation_json is left intact for comparison.
+    revised_eval = _evaluate_resume(state.jd_text, state.resume_text, revised, llm)
+    state.artifacts["revision_evaluation_json"] = revised_eval
+
+    revised_score: int | None = revised_eval.get("overall_score")
+
+    metadata = {
+        "triggered": True,
+        "initial_score": initial_score,
+        "revised_score": revised_score,
+        "delta": (revised_score - initial_score) if revised_score is not None else None,
+        "threshold": revision_threshold,
+        "reason": f"score {initial_score} < threshold {revision_threshold}; revision attempted",
+    }
+    state.artifacts["revision_metadata_json"] = metadata
+    return metadata
 
 
 TOOLS: dict[str, ToolFn] = {

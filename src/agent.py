@@ -8,7 +8,12 @@ from dotenv import load_dotenv
 from src.agent_loop import run_agent
 from src.agent_state import AgentState
 from src.llm import LLM
-from src.tools import tool_score_resume_fit, tool_render_report, tool_evaluate_target_resume
+from src.tools import (
+    tool_evaluate_target_resume,
+    tool_render_report,
+    tool_revise_target_resume,
+    tool_score_resume_fit,
+)
 
 load_dotenv()
 
@@ -47,12 +52,12 @@ def main() -> None:
         state=initial_state,
     )
 
-    target_resume = final_state.artifacts.get("target_resume_txt", "")
-    write_text_file(args.out_resume, target_resume)
+    # --- Post-loop deterministic pipeline ---
+    # These stages always run unconditionally after the agent loop so the
+    # report is complete regardless of which tools the agent chose to call.
 
-    requirements_payload = final_state.artifacts.get("requirements_json", {})
-    requirements = requirements_payload.get("requirements", [])
-
+    # 1. Fit scoring (may have already run inside the agent loop)
+    requirements = final_state.artifacts.get("requirements_json", {}).get("requirements", [])
     if "fit_analysis_json" not in final_state.artifacts and requirements:
         tool_score_resume_fit(
             final_state,
@@ -60,17 +65,44 @@ def main() -> None:
             evidence_per_requirement=3,
         )
 
+    # 2. LLM evaluation of initial draft
     if "resume_evaluation_json" not in final_state.artifacts:
         tool_evaluate_target_resume(state=final_state, llm=llm)
 
+    # 3. Revision pass — revises the draft if the initial score is below
+    #    REVISION_THRESHOLD and re-evaluates the revised version.
+    if "revision_metadata_json" not in final_state.artifacts:
+        tool_revise_target_resume(state=final_state, llm=llm)
+
+    # 4. Render the full report (includes both evaluation and revision section)
     if "report_md" not in final_state.artifacts:
         tool_render_report(final_state)
 
+    # Write the best available resume: revised draft if revision was triggered,
+    # original draft otherwise.
+    revision_triggered = final_state.artifacts.get("revision_metadata_json", {}).get("triggered", False)
+    if revision_triggered and "revised_resume_txt" in final_state.artifacts:
+        best_resume = final_state.artifacts["revised_resume_txt"]
+        resume_note = "(revised draft)"
+    else:
+        best_resume = final_state.artifacts.get("target_resume_txt", "")
+        resume_note = "(initial draft)"
+
+    write_text_file(args.out_resume, best_resume)
     report_md = final_state.artifacts.get("report_md", "")
     write_text_file(args.out_report, report_md)
 
-    print(f"Wrote {args.out_resume} ({len(target_resume.encode('utf-8'))} bytes)")
+    print(f"Wrote {args.out_resume} ({len(best_resume.encode('utf-8'))} bytes) {resume_note}")
     print(f"Wrote {args.out_report} ({len(report_md.encode('utf-8'))} bytes)")
+
+    revision_meta = final_state.artifacts.get("revision_metadata_json", {})
+    if revision_meta.get("triggered"):
+        print(
+            f"Revision: initial={revision_meta.get('initial_score')} → "
+            f"revised={revision_meta.get('revised_score')} "
+            f"(delta={revision_meta.get('delta'):+d})"
+        )
+
     print(f"Artifacts: {sorted(final_state.artifacts.keys())}")
     print(f"Tool calls: {len(final_state.tool_history)}")
 

@@ -113,7 +113,7 @@ src/
 
 resume_corpus/
   raw_resume.txt
-  google_cloud_ai_ml/
+  google_cloud_ai_ml/        ← each entry needs jd.md + resume_variant.txt
   netflix_swe_n_tech/
   ...
 

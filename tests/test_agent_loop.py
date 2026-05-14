@@ -79,8 +79,8 @@ def test_run_agent_unknown_tool_records_error_and_recovers() -> None:
 
 
 def test_run_agent_invalid_json_writes_error_placeholder() -> None:
-    # When every LLM call returns invalid JSON the loop breaks early, exhausts
-    # the max-iters fallback, and writes an error string to target_resume_txt.
+    # When every LLM call returns invalid JSON the loop exhausts max-iters
+    # (parse errors now retry instead of break), then writes an ERROR: sentinel.
     # report_md is NOT produced by run_agent — that happens in main() post-loop.
     llm = FakeLLM(
         outputs=[
@@ -91,9 +91,30 @@ def test_run_agent_invalid_json_writes_error_placeholder() -> None:
     state = run_agent(llm=llm, state=make_state(), max_iters=2)
 
     assert "target_resume_txt" in state.artifacts
+    assert state.artifacts["target_resume_txt"].startswith("ERROR:")
     assert "did not complete successfully" in state.artifacts["target_resume_txt"].lower()
-    assert any("Agent step failed" in note for note in state.notes)
     assert "report_md" not in state.artifacts
+
+
+def test_run_agent_parse_error_retries_then_succeeds() -> None:
+    # First call returns invalid JSON — loop must continue (not break) and retry.
+    # Second call returns a valid tool call; third returns a premature final,
+    # which triggers the fallback generate.
+    llm = FakeLLM(
+        outputs=[
+            'this is not valid json',             # iteration 1 → ValueError → continue
+            '{"tool":"extract_jd_requirements","args":{"top_k":3}}',  # iteration 2
+            '{"final":"done"}',                   # iteration 3 → premature final
+            "Generated resume text here.",        # consumed by fallback generate_target_resume
+        ]
+    )
+
+    state = run_agent(llm=llm, state=make_state(), max_iters=8)
+
+    assert "requirements_json" in state.artifacts
+    assert "target_resume_txt" in state.artifacts
+    assert not state.artifacts["target_resume_txt"].startswith("ERROR:")
+    assert any("parse error" in note.lower() for note in state.notes)
 
 
 # ---------------------------------------------------------------------------

@@ -831,12 +831,13 @@ Instructions:
         user=prompt,
     )
 
-    state.artifacts["revised_resume_txt"] = revised
-
     # Evaluate the revised draft using the same rubric as the initial pass.
     # _evaluate_resume is a pure function — no state mutation — so the original
     # resume_evaluation_json is left intact for comparison.
+    # revised_resume_txt is written only after evaluation succeeds so no partial
+    # state is committed if the evaluator LLM call fails.
     revised_eval = _evaluate_resume(state.jd_text, state.resume_text, revised, llm)
+    state.artifacts["revised_resume_txt"] = revised
     state.artifacts["revision_evaluation_json"] = revised_eval
 
     revised_score: int | None = revised_eval.get("overall_score")

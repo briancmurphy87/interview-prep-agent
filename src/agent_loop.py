@@ -159,6 +159,10 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
     for _ in range(max_iters):
         try:
             action = agent_step(llm, state)
+        except ValueError as e:
+            # Parse/format error from _parse_action — soft failure, retry next iteration
+            state.add_note(f"Agent step parse error (retrying): {e}")
+            continue
         except Exception as e:
             state.add_note(f"Agent step failed: {e}")
             break
@@ -323,7 +327,7 @@ def run_agent(llm: LLM, state: AgentState, max_iters: int = 8) -> AgentState:
             )
 
         state.artifacts["target_resume_txt"] = (
-            "Targeted resume generation did not complete successfully.\n"
+            "ERROR: Targeted resume generation did not complete successfully.\n"
         )
 
     return state

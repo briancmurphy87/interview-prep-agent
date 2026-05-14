@@ -66,7 +66,11 @@ The output file (`--out-resume`) contains the best available draft: the revised 
 - **Evidence-grounded generation:** `score_resume_fit` runs before `generate_target_resume` inside the agent loop. The generation prompt receives verified evidence snippets per requirement and explicit gap warnings via `_build_evidence_grounding_block()`.
 - **Corpus skip warnings:** `tool_load_resume_corpus` reports skipped directories with reasons (`missing resume_variant.txt`, etc.) in the `skipped` list of its return payload.
 - **Revision pass:** `tool_revise_target_resume` implements generate → evaluate → revise. The threshold is `REVISION_THRESHOLD = 70` in `tools.py`. The original `resume_evaluation_json` is preserved; the revision evaluation goes to `revision_evaluation_json`.
-- **Graceful degradation:** If agent exits without generating a resume, `agent_loop.py` forces a fallback `generate_target_resume` call before returning.
+- **Graceful degradation:** `run_agent` in `agent_loop.py` implements a three-tier fallback chain:
+  1. **Normal exit** — LLM emits `{"final":"done"}` after producing `target_resume_txt`.
+  2. **Premature final** — LLM emits `{"final":"done"}` before `target_resume_txt` exists; `tool_generate_target_resume(top_k=2)` is forced directly, then the loop exits.
+  3. **Max iterations exhausted** — same forced generate call; if that also fails, writes `"ERROR: Targeted resume generation did not complete successfully."` to `target_resume_txt` as a sentinel.
+  `agent.py` detects the `ERROR:` prefix and skips evaluation/revision rather than treating the sentinel as a valid resume. LLM JSON parse errors in the loop (malformed output) cause a `continue` (soft retry) rather than a `break`, so a single bad response doesn't abort the loop.
 - **LLM wrapper:** `llm.py` wraps OpenAI Responses API (`gpt-4.1-mini` default). Provides `complete()` (raw text) and `complete_json()` (parsed dict). Retries `APITimeoutError` and `APIConnectionError` up to `MAX_RETRIES` times with exponential back-off. Swap model via `--model` CLI arg.
 
 ## Test Structure

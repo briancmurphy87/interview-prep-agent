@@ -65,14 +65,23 @@ def main() -> None:
             evidence_per_requirement=3,
         )
 
+    target_draft = final_state.artifacts.get("target_resume_txt", "")
+    _is_placeholder = not target_draft or target_draft.startswith("ERROR:") or target_draft.startswith("Targeted resume generation did not complete")
+
     # 2. LLM evaluation of initial draft
-    if "resume_evaluation_json" not in final_state.artifacts:
-        tool_evaluate_target_resume(state=final_state, llm=llm)
+    if "resume_evaluation_json" not in final_state.artifacts and not _is_placeholder:
+        try:
+            tool_evaluate_target_resume(state=final_state, llm=llm)
+        except Exception as e:
+            print(f"Warning: evaluation failed and will be skipped: {e}")
 
     # 3. Revision pass — revises the draft if the initial score is below
     #    REVISION_THRESHOLD and re-evaluates the revised version.
     if "revision_metadata_json" not in final_state.artifacts:
-        tool_revise_target_resume(state=final_state, llm=llm)
+        try:
+            tool_revise_target_resume(state=final_state, llm=llm)
+        except Exception as e:
+            print(f"Warning: revision pass failed and will be skipped: {e}")
 
     # 4. Render the full report (includes both evaluation and revision section)
     if "report_md" not in final_state.artifacts:
@@ -85,7 +94,8 @@ def main() -> None:
         best_resume = final_state.artifacts["revised_resume_txt"]
         resume_note = "(revised draft)"
     else:
-        best_resume = final_state.artifacts.get("target_resume_txt", "")
+        _raw = final_state.artifacts.get("target_resume_txt", "")
+        best_resume = "" if _raw.startswith("ERROR:") or _raw.startswith("Targeted resume generation did not complete") else _raw
         resume_note = "(initial draft)"
 
     write_text_file(args.out_resume, best_resume)

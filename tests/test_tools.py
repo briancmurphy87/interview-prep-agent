@@ -3,8 +3,11 @@ from __future__ import annotations
 import pytest
 
 from src.agent_state import AgentState
+from unittest.mock import patch
+
 from src.tools import (
     REVISION_THRESHOLD,
+    tool_evaluate_target_resume,
     tool_extract_jd_requirements,
     tool_find_resume_evidence,
     tool_load_resume_corpus,
@@ -475,3 +478,49 @@ def test_render_report_revision_section_shows_not_triggered() -> None:
 
     assert "## Revision Pass" in report
     assert "Revision triggered: **No**" in report
+
+
+# ---------------------------------------------------------------------------
+# tool_evaluate_target_resume — error guard
+# ---------------------------------------------------------------------------
+
+
+def test_evaluate_target_resume_raises_if_no_draft() -> None:
+    # tool_evaluate_target_resume must raise ValueError when target_resume_txt
+    # is absent so the caller can catch and skip gracefully.
+    state = AgentState(jd_text="job desc", resume_text="resume text")
+
+    class _NeverCalledLLM:
+        def complete(self, system: str, user: str) -> str:
+            raise AssertionError("LLM should not be called when draft is missing")
+
+    with pytest.raises(ValueError, match="not found"):
+        tool_evaluate_target_resume(state, _NeverCalledLLM())
+
+
+# ---------------------------------------------------------------------------
+# tool_revise_target_resume — atomic write: no partial state on evaluator failure
+# ---------------------------------------------------------------------------
+
+
+def test_revision_evaluation_failure_leaves_no_partial_state() -> None:
+    # If _evaluate_resume raises (e.g. malformed JSON from LLM), neither
+    # revised_resume_txt nor revision_evaluation_json should be written.
+    state = make_state()
+    state.artifacts["target_resume_txt"] = "Original draft resume."
+    state.artifacts["resume_evaluation_json"] = {
+        "overall_score": REVISION_THRESHOLD - 20,
+        "jd_alignment": {"score": 40, "reason": "Weak."},
+        "keyword_coverage": {"score": 50, "reason": "Missing."},
+        "red_flags": ["Unsupported claim"],
+        "suggested_improvements": ["Add specifics"],
+    }
+
+    llm = _FakeLLM(["Revised resume content here.", "not valid json at all"])
+
+    with patch("src.tools._evaluate_resume", side_effect=ValueError("Evaluator returned invalid JSON: ...")):
+        with pytest.raises(ValueError, match="Evaluator returned invalid JSON"):
+            tool_revise_target_resume(state, llm)
+
+    assert "revised_resume_txt" not in state.artifacts, "partial state must not be written on failure"
+    assert "revision_evaluation_json" not in state.artifacts
